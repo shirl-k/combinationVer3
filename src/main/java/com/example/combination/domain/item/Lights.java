@@ -12,7 +12,6 @@ import lombok.*;
 @Builder
 public class Lights extends Item {
 
-    private String model;
-    private String color;
+    private String type;
 
 }

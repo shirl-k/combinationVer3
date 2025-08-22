@@ -4,15 +4,14 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.*;
 
-@DiscriminatorValue("Wallpaper")
+@DiscriminatorValue("Curtain")
 @Getter
 @Entity
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Wallpaper extends Item {
-
-    private String texture;
-
+public class Curtain extends Item {
+    private int size;
+    private int texture;
 }

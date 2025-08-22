@@ -18,8 +18,8 @@ import java.util.List;
 @Entity
 @Table(name = "member")
 public class Member {
-    @Id
-    @GeneratedValue
+    @Id @GeneratedValue
+    @Column(name = "member_id")
     private Long id; //자동생성 id
 
     private String name;
@@ -37,30 +37,28 @@ public class Member {
     private UserInfo userInfo;
 
     @Embedded
-    @Column(nullable = false)
     private HomeAddress homeAddress;
 
     @Embedded
-    @Column(nullable = false)
     private DelivAddress delivAddress; // 배송지 주소
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "social_account_id")
     private SocialAccount socialAccount;
 
+    @OneToOne(mappedBy = "member",fetch = FetchType.LAZY)
     private ShoppingCart shoppingCart;
+
+    // === 연관관계 편의 메서드 ===
+//    public void createShoppingCart() {
+//        ShoppingCart cart = new ShoppingCart();
+//        cart.setMember(this);      // cart.member = this
+//        this.shoppingCart = cart;  // member.shoppingCart = cart
+//    }
 
 }
 
-    //=======================================//
-//    private String shoppingCart;
-//
-//    @Embedded
-//    private RelSocialAccount relSocialAccount;
 
-    //======================================//
-
-//    private List<RelSocialAccount> relSocialAccounts = new ArrayList<>();
-
-//    private List<DelivAddress> delivAddresses = new ArrayList<>()
 
 
 

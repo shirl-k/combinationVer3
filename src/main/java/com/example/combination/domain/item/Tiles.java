@@ -13,7 +13,5 @@ import lombok.*;
 @Builder
 public class Tiles extends Item {
 
-    private String model;
-    private String color;
-    private String texture;
+    private int size;
 }

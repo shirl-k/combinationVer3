@@ -28,6 +28,8 @@ public class Order {
     @Column(name = "order_id")
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @Enumerated(EnumType.STRING)
@@ -41,6 +43,7 @@ public class Order {
 
     private PricePolicy pricePolicy;
 
+    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
     private Delivery delivery;
@@ -53,30 +56,4 @@ public class Order {
 
 }
 
-/*
-        private Long id;
 
-    private Member member;
-
-    @Enumerated(EnumType.STRING)
-    private Membership membershipGrade;
-
-    private List<OrderItem> orderItems = new ArrayList<>();
-
-    private TotalPrice totalprice;
-
-    private DiscountPrice discountPrice;
-
-    private PricePolicy pricePolicy;
-
-    private OrderStatus orderStatus;
-
-    private Delivery delivery;
-
-    private LocalDateTime orderDate;
-
-    private Payment payment;
-
-    private PaymentMethod paymentMethod;
-
- */

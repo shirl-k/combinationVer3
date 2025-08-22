@@ -3,10 +3,7 @@ package com.example.combination.domain.delivery;
 import com.example.combination.domain.order.Order;
 import com.example.combination.domain.valuetype.DelivAddress;
 import com.example.combination.domain.valuetype.HomeAddress;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -29,6 +26,7 @@ public class Delivery {
 
     private DelivAddress deliverAddress;
 
+    @Enumerated(EnumType.STRING)
     private DeliveryStatus deliveryStatus;
 
     private LocalDateTime deliveryTime;

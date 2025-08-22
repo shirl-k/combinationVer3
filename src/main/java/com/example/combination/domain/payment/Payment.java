@@ -4,6 +4,8 @@ import com.example.combination.domain.business.MembershipPolicy;
 import com.example.combination.domain.business.PricePolicy;
 import com.example.combination.domain.order.Order;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import lombok.*;
 
@@ -19,6 +21,8 @@ import java.time.LocalDateTime;
 @Table(name = "payment")
 public class Payment {
     private Long id;
+
+    @Enumerated(EnumType.STRING)
     private PayStatus payStatus;
 
     private Order order;

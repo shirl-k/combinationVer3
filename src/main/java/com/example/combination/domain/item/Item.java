@@ -33,6 +33,10 @@ public abstract class Item {
 
     private String itemDescription;
 
+    private String model;
+    private String style;
+    private String color;
+
 
 }
 
