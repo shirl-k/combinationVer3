@@ -1,0 +1,24 @@
+package com.example.combination.domain.valuetype;
+
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.*;
+
+@Embeddable
+@Getter
+@ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
+@Table(name = "homeAddress")
+public class HomeAddress {
+
+    @Id @GeneratedValue
+    private Long id;
+
+    private String city_h;
+    private String street_h;
+    private String zipcode_h;
+}
