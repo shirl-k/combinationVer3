@@ -3,7 +3,7 @@ package com.example.combination.domain.order;
 import com.example.combination.domain.business.PricePolicy;
 import com.example.combination.domain.delivery.Delivery;
 import com.example.combination.domain.member.Member;
-import com.example.combination.domain.member.Membership;
+import com.example.combination.domain.member.MembershipGrade;
 import com.example.combination.domain.payment.Payment;
 import com.example.combination.domain.payment.PaymentMethod;
 import com.example.combination.domain.price.DiscountPrice;
@@ -33,7 +33,7 @@ public class Order {
     private Member member;
 
     @Enumerated(EnumType.STRING)
-    private Membership membershipGrade;
+    private MembershipGrade membershipGrade;
 
     private List<OrderItem> orderItems = new ArrayList<>();
 

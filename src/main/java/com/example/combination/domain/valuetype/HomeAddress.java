@@ -18,7 +18,7 @@ public class HomeAddress {
     @Id @GeneratedValue
     private Long id;
 
-    private String city_h;
-    private String street_h;
-    private String zipcode_h;
+    private String city;
+    private String street;
+    private String zipcode;
 }

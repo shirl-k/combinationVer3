@@ -9,14 +9,14 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@Table(name = "delivAddress1")
+@Table(name = "delivAddress")
 public class DelivAddress {
 
     @Id @GeneratedValue
     private Long id;
 
-    private String city_d1;
-    private String street_d1;
-    private String zipcode_d1;
+    private String city;
+    private String street;
+    private String zipcode;
 
 }

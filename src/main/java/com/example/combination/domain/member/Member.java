@@ -25,7 +25,7 @@ public class Member {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    private Membership membershipGrade;
+    private MembershipGrade membershipGrade;
 
     //회원별 주문 목록
     @OneToMany(mappedBy = "member")
