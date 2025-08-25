@@ -9,7 +9,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -27,8 +26,8 @@ public class Payment {
 
     private Order order;
     private LocalDateTime orderDate;
-    private int totalPrice;
-    private int discountPrice;
+//    private TotalPrice totalPrice;
+//    private  discountPrice;
     private PaymentMethod paymentMethod;
     private PricePolicy pricePolicy;
     private MembershipPolicy membershipPolicy;

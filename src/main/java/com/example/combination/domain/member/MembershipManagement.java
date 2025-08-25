@@ -16,7 +16,8 @@ public class MembershipManagement implements MembershipPolicy {
     @Id
     @GeneratedValue
     private Long id;
-/*
+
+/*  등급 조정
     @Column
     private Pearl pearl;
     private Silver silver;
@@ -26,7 +27,7 @@ public class MembershipManagement implements MembershipPolicy {
 
 */
 
-    private int accumulatedPayment;
+//    private AccumulatedPayment accumulatedPayment;
 
 
     public MembershipGrade grading(Member member) {

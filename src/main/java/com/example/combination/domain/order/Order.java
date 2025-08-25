@@ -6,8 +6,6 @@ import com.example.combination.domain.member.Member;
 import com.example.combination.domain.member.MembershipGrade;
 import com.example.combination.domain.payment.Payment;
 import com.example.combination.domain.payment.PaymentMethod;
-import com.example.combination.domain.price.DiscountPrice;
-import com.example.combination.domain.price.TotalPrice;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,11 +33,12 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private MembershipGrade membershipGrade;
 
+    @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    private TotalPrice totalprice;
 
-    private DiscountPrice discountPrice;
+
+//    private DiscountPrice discountPrice;
 
     private PricePolicy pricePolicy;
 
@@ -53,6 +52,13 @@ public class Order {
     private Payment payment;
 
     private PaymentMethod paymentMethod;
+
+// totalPrice 주문서 총합금액
+    int totalPrice = 0;
+
+    for( OrderItem sum : orderItems ){
+        totalPrice += sum.getTotalPrice();
+    } return totalPrice;
 
 }
 

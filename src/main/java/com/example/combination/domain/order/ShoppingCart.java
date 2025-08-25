@@ -1,8 +1,10 @@
 package com.example.combination.domain.order;
 
 import com.example.combination.domain.member.Member;
+import com.example.combination.repository.ItemCount;
 import jakarta.persistence.*;
 import lombok.*;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +16,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "shoppingCart")
-public class ShoppingCart {
-
+public class ShoppingCart implements ItemCount {
     @Id @GeneratedValue
     @Column(name = "cart_id")
     private Long id;
@@ -25,10 +26,17 @@ public class ShoppingCart {
     private Member member;
 
     @OneToMany(mappedBy = "shoppingCart",cascade = CascadeType.ALL)
-    private List<OrderItem> orderItem = new ArrayList<>();
+    private List<OrderItem> orderItems = new ArrayList<>();
 
-    private int totalPrice;
-    private int discountPrice;
+
+
+    //------------//
+
+
+
+
+//    private TotalPrice totalPrice;
+//    private int discountPrice;
 
     // setter 대신 안전하게 연관관계 편의 메서드 사용
 //    public void setMember(Member member) {
@@ -45,4 +53,6 @@ public class ShoppingCart {
 // cascade = CascadeType.ALL 때문에 ShoppingCart도 자동 저장됨
 
  */
+
+
 }
