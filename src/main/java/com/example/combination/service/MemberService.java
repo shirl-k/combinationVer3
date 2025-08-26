@@ -1,0 +1,46 @@
+package com.example.combination.service;
+
+
+import com.example.combination.domain.member.Member;
+import com.example.combination.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class MemberService {
+    //회원가입
+    private final MemberRepository memberRepository;
+
+
+    @Transactional
+    public Long join(Member member) {
+        validateDuplicateMember(member);
+        memberRepository.save(member);
+        return member.getId();
+    }
+    
+    //중복 회원 검증
+    private void validateDuplicateMember(Member member) {
+        List<Member> findMembers = memberRepository.findByName(member.getName());
+        if(!findMembers.isEmpty())
+            throw new IllegalStateException("중복된 회원으로 아이디를 사용할 수 없습니다.")
+    }
+
+    /*회원 조회*/
+    
+    //전체 조회
+    public List<Member> findMembers() {
+        return memberRepository.findAll();
+    }
+    
+    //userId로 회원 단건 조회
+    public Member findOne(String userId) {
+        return memberRepository.findOne(userId);
+    }
+
+}

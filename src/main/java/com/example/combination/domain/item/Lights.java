@@ -6,7 +6,6 @@ import lombok.*;
 @DiscriminatorValue("Lights")
 @Getter
 @Entity
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

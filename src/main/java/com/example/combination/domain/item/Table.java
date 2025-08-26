@@ -7,7 +7,6 @@ import lombok.*;
 @DiscriminatorValue("Table")
 @Getter
 @Entity
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

@@ -7,7 +7,6 @@ import lombok.*;
 @DiscriminatorValue("Wallpaper")
 @Getter
 @Entity
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

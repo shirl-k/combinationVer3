@@ -7,7 +7,6 @@ import lombok.*;
 @DiscriminatorValue("Curtain")
 @Getter
 @Entity
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

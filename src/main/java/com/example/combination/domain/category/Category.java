@@ -1,9 +1,6 @@
 package com.example.combination.domain.category;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -13,7 +10,6 @@ import java.util.List;
 @NoArgsConstructor//매개변수 없는 생성자
 @AllArgsConstructor
 @Builder
-@ToString
 @Entity
 @Table(name = "category")
 public class Category {
@@ -24,5 +20,6 @@ public class Category {
 
     private String name;
 
+    @OneToMany(mappedBy = "category")
     private List<CategoryItem> categoryItems = new ArrayList<>();
 }

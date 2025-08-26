@@ -8,7 +8,6 @@ import lombok.*;
 @NoArgsConstructor//매개변수 없는 생성자
 @AllArgsConstructor
 @Builder
-@ToString
 @Entity
 @Table(name = "membershipManagement")
 public class MembershipManagement implements MembershipPolicy {

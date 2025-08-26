@@ -7,7 +7,6 @@ import lombok.*;
 @DiscriminatorValue("Tiles")
 @Getter
 @Entity
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

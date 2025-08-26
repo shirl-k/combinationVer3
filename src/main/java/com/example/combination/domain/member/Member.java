@@ -14,7 +14,6 @@ import java.util.List;
 @NoArgsConstructor//매개변수 없는 생성자
 @AllArgsConstructor
 @Builder
-@ToString
 @Entity
 @Table(name = "member")
 public class Member {

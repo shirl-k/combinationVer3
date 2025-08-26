@@ -8,7 +8,6 @@ import lombok.*;
 
 @Embeddable
 @Getter
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder

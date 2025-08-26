@@ -1,7 +1,7 @@
 package com.example.combination.domain.order;
 
 import com.example.combination.domain.member.Member;
-import com.example.combination.repository.ItemCount;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,30 +10,52 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Setter
 @NoArgsConstructor//매개변수 없는 생성자
 @AllArgsConstructor
-@ToString
 @Builder
 @Entity
 @Table(name = "shoppingCart")
-public class ShoppingCart implements ItemCount {
+public class ShoppingCart {
     @Id @GeneratedValue
     @Column(name = "cart_id")
-    private Long id;
+    private Long cartId;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "shoppingCart",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
+    private int orderPrice; //주문 당시 가격 (상품 가격 변동 고려)
+
+    private int orderQuantity; //주문 수량
 
 
     //------------//
+    public ShoppingCart createCart(Member member) {
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setMember(member);
+        return shoppingCart;
+    }
+
+    public int getTotalPrice() {
+        return orderQuantity * orderPrice;  //쇼핑카트에서 합산
+    }
 
 
+    //-------------------------------------------- totalPrice 주문서 총합금액
+//    int totalPrice = 0;
+//
+//    for(
+//    OrderItem sum :orderItems)
+//
+//    {
+//        totalPrice += sum.getTotalPrice();
+//    } return totalPrice;
 
+//------------------------------------------------/
 
 //    private TotalPrice totalPrice;
 //    private int discountPrice;

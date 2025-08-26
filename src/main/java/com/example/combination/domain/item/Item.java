@@ -2,13 +2,14 @@ package com.example.combination.domain.item;
 
 import com.example.combination.domain.category.CategoryItem;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@ToString
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -21,14 +22,13 @@ public abstract class Item {
     @Id @GeneratedValue
     private Long id;
 
-    private String itemCode;
-
     private String name;
 
     private int price;
 
     private int stockQuantity;
 
+    @OneToMany
     private List<CategoryItem> categoryItems = new ArrayList<>();
 
     private String itemDescription;
@@ -41,19 +41,3 @@ public abstract class Item {
 
 }
 
-/*
- private Long id;
-
-    private String itemCode;
-
-    private String name;
-
-    private int price;
-
-    private int stockQuantity;
-
-    private List<CategoryItem> categoryItems = new ArrayList<>();
-
-    private String itemDescription;
-
- */
