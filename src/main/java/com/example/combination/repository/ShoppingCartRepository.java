@@ -1,13 +1,24 @@
 package com.example.combination.repository;
 
 
-import com.example.combination.domain.order.ShoppingCart;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.example.combination.dto.OrderItemDTO;
+import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
+@Repository
+@RequiredArgsConstructor
+public class ShoppingCartRepository {
 
-public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, Long> {
+    private final EntityManager em;
 
-    List<ShoppingCart> findByMemberIdAndCartId(Long userId, Long cartId);
+    private OrderItemDTO orderItemsDTO; //상품 선택 정보
+
+//
+//    ShoppingCart cart = shoppingCartRepository.findByUserId(userId);
+//
+//    CartItem cartItem = CartItem.fromDTO(dto, cart);
+//cart.addItem(cartItem);          // Cart에 추가
+//cartRepository.save(cart);       // DB 저장
 
 }

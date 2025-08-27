@@ -1,9 +1,9 @@
 package com.example.combination.domain.order;
 
 import com.example.combination.domain.item.Item;
+import com.example.combination.dto.CartItemDTO;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.ui.Model;
 
 @Getter
 @Setter
@@ -12,55 +12,50 @@ import org.springframework.ui.Model;
 @Builder
 @Entity
 @Table(name = "orderItem")
-public class OrderItem {
+public class OrderItem { //결제 시 스냅샷(결제 당시 금액 영수증처럼 그대로 찍어내기. 가격 변동 고려)
 
     @Id
     @GeneratedValue
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id")
-    private Item item;
+    private Long skuId;  //재고 관리 단위
+
+    private String name;
+
+    private int unitPrice; //단가.  //주문 당시 가격 (상품 가격 변동 고려)
+
+    private int quantity; //주문 수량
+
+    private int totalPrice;
+
+    private int discountPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_item_id")
+    @JoinColumn(name = "order_id")
     private Order order;
 
-    private int orderPrice; //주문 당시 가격 (상품 가격 변동 고려)
+    //============핵심 비즈니스 로직 ==============//
+    
+    //CartDTO를 OrderItem엔티티로 변환 (영속 데이터-> OrderItemRepository에서 DB 저장 로직)
+    public static OrderItem fromDTO(CartItemDTO cartItemDTO) {
+        return OrderItem.builder()
+                .skuId(cartItemDTO.getId())
+                .name(cartItemDTO.getItemName())
+                .unitPrice(cartItemDTO.getUnitPrice())
+                .quantity(cartItemDTO.getQuantity())
+                .totalPrice(cartItemDTO.getTotalPrice())
+                .build();
 
-    private int orderQuantity; //주문 수량
-
-
-
-
-//
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id")
-    private ShoppingCart shoppingCart;
-
-
-    //------------------//
-    public OrderItem createOrderItem(Item item, int orderQuantity, int orderPrice) {
-        OrderItem orderItem = new OrderItem();
-        orderItem.setItem(item);
-        orderItem.setOrderQuantity(orderQuantity);
-        orderItem.setOrderPrice(orderPrice);
-        return orderItem;
-    } //CartItemDTO로 이동
-
-    public void addOrderQuantity(int orderQuantity) {
-        this.orderQuantity += orderQuantity;
-    } //수량 증감
-
-    public void minusOrderQuantity(int orderQuantity) {
-        this.orderQuantity -= orderQuantity;
     }
 
-//    public Order getOrder(Item item, int orderQuantity, int orderPrice) {
+    //
+
+
+//    public Order getOrder(Item item, int orderQuantity, int unitPrice) {
 //        return Order.builder()
 //                .item(item)
 //                .orderQuantity(orderQuantity)
-//                .orderPrice(orderPrice)
+//                .unitPrice(unitPrice)
 //                .build();
 //
 //    }
@@ -71,12 +66,12 @@ public class OrderItem {
 //
 //    public OrderItem createOrderItem(
 //            Item item,
-//            int orderPrice,
+//            int unitPrice,
 //            int orderQuantity
 //            ) {
 //        return OrderItem.builder()
 //                .item(item)
-//                .orderPrice(orderPrice)
+//                .unitPrice(unitPrice)
 //                .orderQuantity(orderQuantity)
 //                .build();
     //OrderItem 주문항목 객체 만듦

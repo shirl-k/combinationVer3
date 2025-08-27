@@ -28,7 +28,7 @@ public class MemberService {
     private void validateDuplicateMember(Member member) {
         List<Member> findMembers = memberRepository.findByName(member.getName());
         if(!findMembers.isEmpty())
-            throw new IllegalStateException("중복된 회원으로 아이디를 사용할 수 없습니다.")
+            throw new IllegalStateException("중복된 회원으로 아이디를 사용할 수 없습니다.");
     }
 
     /*회원 조회*/

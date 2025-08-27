@@ -11,10 +11,14 @@ import java.util.List;
 @Builder
 public class OrderRequestDTO {
 
-    private Long id; //단일 결제
-
-    private int orderQuantity; //단일 결제
-
-    private List<CartItemDTO> cartItems; //장바구니 결제
+//    private Long id; //단일 결제
+//    private String userName;
+//    private Long cartId;
+//    private Long orderId;
+//    private Long itemId;
+//
+//    private int quantity; //단일 결제
+//
+//    private List<CartItemDTO> cartItems; //장바구니 결제
 
 }

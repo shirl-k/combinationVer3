@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -30,26 +31,34 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private MembershipGrade membershipGrade;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderItem> orderItems = new ArrayList<>();
-
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
+
+    @OneToMany(mappedBy ="order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
-//    private DiscountPrice discountPrice;
+    private int discountPrice;
+    private int totalPrice;
 
-//    private PricePolicy pricePolicy;
+    private int pricePolicy;
 
     @Column(nullable = false)
+    @Embedded
     private DelivAddress delivAddress;
 
+    @Embedded
     private HomeAddress homeAddress;
 
+    //============핵심 비즈니스 로직==============//
 
-
+    //연관관계 편의 메서드 //orderItem 과 Order 양쪽 동일하게 업데이트
+    public void addOrderItem(OrderItem orderItem) {
+        orderItems.add(orderItem);
+        orderItem.setOrder(this);
+    }
 
 
 }

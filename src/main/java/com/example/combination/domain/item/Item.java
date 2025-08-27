@@ -20,7 +20,9 @@ import java.util.List;
 public abstract class Item {
 
     @Id @GeneratedValue
-    private Long id;
+    private Long Id;
+
+    private String itemId; //Spu
 
     private String name;
 
