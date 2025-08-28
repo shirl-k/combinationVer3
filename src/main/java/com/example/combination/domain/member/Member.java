@@ -11,6 +11,7 @@ import java.util.List;
 
 
 @Getter
+@Setter
 @NoArgsConstructor//매개변수 없는 생성자
 @AllArgsConstructor
 @Builder
@@ -23,8 +24,16 @@ public class Member {
 
     private String name;
 
+    private String userId;
+
     @Enumerated(EnumType.STRING)
     private MembershipGrade membershipGrade;
+
+    @Enumerated(EnumType.STRING)
+    private MemberStatus memberStatus;  //회원가입(계정 생성)/회원탈퇴
+
+    @Enumerated(EnumType.STRING)
+    private LogInStatus logInStatus;//로그인 성공/로그인 실패/로그아웃
 
     //회원별 주문 목록
     @OneToMany(mappedBy = "member")

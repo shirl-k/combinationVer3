@@ -2,12 +2,14 @@ package com.example.combination.service;
 
 
 import com.example.combination.domain.member.Member;
+import com.example.combination.domain.member.MemberStatus;
 import com.example.combination.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,14 +35,27 @@ public class MemberService {
 
     /*회원 조회*/
     
-    //전체 조회
+    //전체 회원 조회
     public List<Member> findMembers() {
         return memberRepository.findAll();
     }
     
     //userId로 회원 단건 조회
-    public Member findOne(String userId) {
+    public Optional<Member> findOne(String userId) {
         return memberRepository.findOne(userId);
     }
+
+    //회원 이름으로 회원 조회
+    public List<Member> findByName(String name) {
+        return memberRepository.findByName(name);
+    }
+
+    @Transactional
+    public void updateMemberStatus(String userId , MemberStatus newStatus) {
+        Member member = memberRepository.findOne(userId)
+                .orElseThrow(()-> new IllegalStateException("회원이 존재하지 않습니다."));
+        member.setMemberStatus(newStatus);
+    }
+
 
 }

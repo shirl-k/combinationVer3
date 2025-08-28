@@ -14,7 +14,7 @@ import lombok.*;
 public class UserInfo {
     private String birth;
     private String gender;
-    private String userId; //@Valid
+     //@Valid
     private String password; //@Valid
     private String nickname;
     private String phoneNum;

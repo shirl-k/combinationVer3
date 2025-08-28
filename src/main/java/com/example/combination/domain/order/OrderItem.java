@@ -22,7 +22,7 @@ public class OrderItem { //결제 시 스냅샷(결제 당시 금액 영수증�
 
     private String name;
 
-    private int unitPrice; //단가.  //주문 당시 가격 (상품 가격 변동 고려)
+    private int unitPriceAtOrder; //주문 당시 단가.  //주문 당시 가격 (상품 가격 변동 고려)
 
     private int quantity; //주문 수량
 
@@ -30,25 +30,29 @@ public class OrderItem { //결제 시 스냅샷(결제 당시 금액 영수증�
 
     private int discountPrice;
 
+//    private int lineTotal; //unitPriceAtOrder * quantity
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "orders_id")
     private Order order;
 
     //============핵심 비즈니스 로직 ==============//
     
-    //CartDTO를 OrderItem엔티티로 변환 (영속 데이터-> OrderItemRepository에서 DB 저장 로직)
+    //CartItemDTO를 OrderItem엔티티로 변환 - 스냅샷 변환 팩토리 (영속 데이터-> OrderItemRepository에서 DB 저장 로직)
     public static OrderItem fromDTO(CartItemDTO cartItemDTO) {
         return OrderItem.builder()
                 .skuId(cartItemDTO.getId())
                 .name(cartItemDTO.getItemName())
-                .unitPrice(cartItemDTO.getUnitPrice())
+                .unitPriceAtOrder(cartItemDTO.getUnitPrice())
                 .quantity(cartItemDTO.getQuantity())
                 .totalPrice(cartItemDTO.getTotalPrice())
                 .build();
 
     }
 
-    //
+    public int getLineTotal() {
+        return unitPriceAtOrder * quantity;
+    }
 
 
 //    public Order getOrder(Item item, int orderQuantity, int unitPrice) {

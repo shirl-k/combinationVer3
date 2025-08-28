@@ -1,7 +1,5 @@
 package com.example.combination.domain.payment;
 
-import com.example.combination.domain.business.MembershipPolicy;
-import com.example.combination.domain.business.PricePolicy;
 import com.example.combination.domain.order.Order;
 import jakarta.persistence.*;
 import lombok.*;
