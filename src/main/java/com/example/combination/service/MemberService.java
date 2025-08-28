@@ -39,11 +39,7 @@ public class MemberService {
     public List<Member> findMembers() {
         return memberRepository.findAll();
     }
-    
-    //userId로 회원 단건 조회
-    public Optional<Member> findOne(String userId) {
-        return memberRepository.findOne(userId);
-    }
+
 
     //회원 이름으로 회원 조회
     public List<Member> findByName(String name) {
@@ -51,10 +47,10 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateMemberStatus(String userId , MemberStatus newStatus) {
-        Member member = memberRepository.findOne(userId)
+    public void updateMemberStatus(Long id , MemberStatus newStatus) {
+        Member member = memberRepository.findOne(id)
                 .orElseThrow(()-> new IllegalStateException("회원이 존재하지 않습니다."));
-        member.setMemberStatus(newStatus);
+        member.changeMemberStatus(newStatus);
     }
 
 

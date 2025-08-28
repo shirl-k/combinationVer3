@@ -21,8 +21,8 @@ public class MemberRepository {
     }
     
     //userId로 회원 단건 조회
-    public Optional<Member> findOne(String userId) {
-        return Optional.ofNullable(em.find(Member.class, userId));
+    public Optional<Member> findOne(Long id) {
+        return Optional.ofNullable(em.find(Member.class, id));
     }
 
     //회원 엔티티에서 전체 회원 조회

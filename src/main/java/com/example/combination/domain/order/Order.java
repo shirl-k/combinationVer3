@@ -35,7 +35,8 @@ public class Order {
     private MembershipGrade membershipGrade;
 
     @Enumerated(EnumType.STRING)
-    private OrderStatus orderStatus; //Order -> Payments 사이 단계
+    private OrderStatus orderStatus; //주문 자체 흐름. 주문의 큰 그림만 관리 (결제가 실패했다고 해서 Order를 바로 실패로 두진 않음. 아직 살아있을 수 있음.)
+                                        // CREATED(주문 생성됨. 결제 전), CONFIRMED(결제 성공, 주문 확정), CANCELLED(결제 전 취소), COMPLETED(배송까지 완료)
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
@@ -91,6 +92,11 @@ public class Order {
                 .finalPrice(finalPrice)
                 .createOrderDate(LocalDate.now())
                 .build();
+    }
+
+    //Order 변경감지
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
     }
 }
 

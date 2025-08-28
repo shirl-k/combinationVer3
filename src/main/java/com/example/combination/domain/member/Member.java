@@ -57,12 +57,12 @@ public class Member {
     @OneToOne(mappedBy = "member",fetch = FetchType.LAZY)
     private ShoppingCart shoppingCart;
 
-    // === 연관관계 편의 메서드 ===
-//    public void createShoppingCart() {
-//        ShoppingCart cart = new ShoppingCart();
-//        cart.setMember(this);      // cart.member = this
-//        this.shoppingCart = cart;  // member.shoppingCart = cart
-//    }
+    // ======비즈니스 로직========//
+
+    //Member 변경감지
+    public void changeMemberStatus(MemberStatus newStatus) {
+        this.memberStatus = newStatus;
+    }
 
 }
 

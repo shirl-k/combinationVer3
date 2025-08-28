@@ -1,5 +1,5 @@
 package com.example.combination.domain.order;
 
 public enum OrderStatus {
-    CREATED, CANCEL
+    CREATED, CONFIRMED, CANCELLED, COMPLETED
 }

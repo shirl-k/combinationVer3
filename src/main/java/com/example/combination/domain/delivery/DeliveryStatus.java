@@ -1,5 +1,5 @@
 package com.example.combination.domain.delivery;
 
 public enum DeliveryStatus {
-    READY, COMPLETED
+    READY,SHIPPED,IN_TRANSIT,DELIVERED,RETURNED
 }
