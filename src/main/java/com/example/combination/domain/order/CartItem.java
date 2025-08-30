@@ -23,7 +23,7 @@ public class CartItem {
     private ShoppingCart shoppingCart;
 
     private String userId;
-    private String skuId; //상품 아이디 // SKU ID
+    private Long skuId; //상품 아이디 // SKU ID
     private String itemName;
     private String size;
     private String color;
@@ -41,7 +41,7 @@ public class CartItem {
                 .itemName(dto.getItemName())
                 .size(dto.getSize())
                 .color(dto.getColor())
-                .quantity(dto.getQuantity())
+                .quantity(dto.getQuantity()) //수량
                 .unitPrice(dto.getUnitPrice())
                 .build();
     }
@@ -50,12 +50,14 @@ public class CartItem {
 
     //총합 금액
     public int getTotalPrice() {
-        return unitPrice*quantity;
+        return unitPrice * quantity;
 
         /* private int totalPrice;처럼 변수로 고정하지 않는 이유는 ShoppingCart에서 실시간으로 가격이 변동되기 때문에
         계산 메서드로 두는 것이 낫다. CartItemDTO에서 builder로 쇼핑카트 엔티티를 CartItemDTO 로 변환해서
         이 CartItem클래스의 getTotalPrice메서드의 계산 값을 CartItemDTO객체의 totalPrice에 담음
          */
+
+        //quantity가 변동돼서
     }
 
 }

@@ -20,9 +20,24 @@ public class MemberRepository {
         em.persist(member);
     }
     
-    //userId로 회원 단건 조회
-    public Optional<Member> findOne(Long id) {
+    //PK로 DB가 회원 조회
+    public Optional<Member> findById(Long id) {
         return Optional.ofNullable(em.find(Member.class, id));
+        
+    }//userId로 회원 단건 조회
+    public Optional<Member> findByUserId(String userId) {
+        List<Member> result = em.createQuery("select m from Member m where m.userId =:userId", Member.class)
+                .setParameter("userId", userId)
+                .getResultList();
+        return result.stream().findFirst();
+    }
+
+    //nickname 조회
+    public Optional<Member> findByNickname(String nickname) { //em.find()는 PK만 조회가능. 이외에는 JPQL
+        List<Member> result = em.createQuery("select m from Member m where m.userInfo.nickname =:nickname", Member.class)
+                .setParameter("nickname", nickname)
+                .getResultList();
+        return result.stream().findFirst();
     }
 
     //회원 엔티티에서 전체 회원 조회

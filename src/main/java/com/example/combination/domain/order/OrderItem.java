@@ -39,16 +39,16 @@ public class OrderItem { //결제 시 스냅샷(결제 당시 금액 영수증�
     //============핵심 비즈니스 로직 ==============//
     
     //CartItemDTO를 OrderItem엔티티로 변환 - 스냅샷 변환 팩토리 (영속 데이터-> OrderItemRepository에서 DB 저장 로직)
-    public static OrderItem fromDTO(CartItemDTO cartItemDTO) {
-        return OrderItem.builder()
-                .skuId(cartItemDTO.getId())
-                .name(cartItemDTO.getItemName())
-                .unitPriceAtOrder(cartItemDTO.getUnitPrice())
-                .quantity(cartItemDTO.getQuantity())
-                .totalPrice(cartItemDTO.getTotalPrice())
-                .build();
-
-    }
+//    public static OrderItem fromDTO(CartItemDTO cartItemDTO) {
+//        return OrderItem.builder()
+//                .skuId(cartItemDTO.getId())
+//                .name(cartItemDTO.getItemName())
+//                .unitPriceAtOrder(cartItemDTO.getUnitPrice())
+//                .quantity(cartItemDTO.getQuantity())
+//                .totalPrice(cartItemDTO.getTotalPrice())
+//                .build();
+//
+//    }
 
     public int getLineTotal() {
         return unitPriceAtOrder * quantity;

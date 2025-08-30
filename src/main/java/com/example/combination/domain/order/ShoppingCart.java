@@ -33,14 +33,15 @@ public class ShoppingCart {
 
     private int quantity; //주문 수량
 
-    private int discountPrice; //멤버십 등 혜텍 적용 할인금액,카드 혜택 제외
-
+    private int discountPrice; //할인금액 정가-단가
 
 //===========핵심 비즈니스 로직============//
 
     //회원별 장바구니 생성 메서드
     public static ShoppingCart createCart(Member member) {
-        return ShoppingCart.builder().member(member).build();
+        return ShoppingCart.builder()
+                .member(member)
+                .build();
     }
 
     //연관관계 편의 메서드 - DB와 엔티티 양쪽이 동기화. 양방향 연관관계의 반대편(읽기 전용 컬렉션) 도 업데이트
@@ -58,65 +59,26 @@ public class ShoppingCart {
     public void increaseQuantity(CartItem cartItem, int quantity) {
         cartItem.setQuantity(cartItem.getQuantity() + quantity);
     }
-    
+
     //개별 수량 감소
-    public void decreseQuantity(CartItem cartItem, int quantity) {
+    public void decreaseQuantity(CartItem cartItem, int quantity) {
         cartItem.setQuantity(cartItem.getQuantity() - quantity);
     }
-    
+
     //할인금액 포함 총합 금액
     public int calculateTotal() { //실시간 계산 메서드
         return cartItems.stream()
                 .filter(CartItem::isSelected)
                 .mapToInt(CartItem::getTotalPrice)
-                .sum()-discountPrice;
+                .sum();
     }
-
+    //discountPrice 계산기
 }
 
 
-    /*
-    public int getTotalPrice() {
-        return quantity * unitPrice;  //쇼핑카트에서 합산
-    }
-    */
-//    public int getFinalPrice(){
-//        return quantity*unitPrice - discountPrice;
-
-    //membershipPolicy - discountPrice
 
 
-/*
-    //-------------------------------------------- totalPrice 주문서 총합금액
-//    int totalPrice = 0;
-//
-//    for(
-//    OrderItem sum :orderItems)
-//
-//    {
-//        totalPrice += sum.getTotalPrice();
-//    } return totalPrice;
 
-//------------------------------------------------/
-
-//    private TotalPrice totalPrice;
-//    private int discountPrice;
-
-    // setter 대신 안전하게 연관관계 편의 메서드 사용
-//    public void setMember(Member member) {
-//        this.member = member;
-//    }
-
-/*    //장바구니 자동생성 연관관계 편의 메서드 사용 예시
-    Member member = new Member();
-
-   // 멤버 생성 시 자동으로 장바구니도 같이 생성
-    member.createShoppingCart();
-
-    entityManager.persist(member);
-// cascade = CascadeType.ALL 때문에 ShoppingCart도 자동 저장됨
-
- */
 
 
 

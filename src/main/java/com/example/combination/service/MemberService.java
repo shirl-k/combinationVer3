@@ -3,11 +3,13 @@ package com.example.combination.service;
 
 import com.example.combination.domain.member.Member;
 import com.example.combination.domain.member.MemberStatus;
+import com.example.combination.domain.valuetype.UserInfo;
 import com.example.combination.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.plaf.PanelUI;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,37 +23,67 @@ public class MemberService {
 
     @Transactional
     public Long join(Member member) {
-        validateDuplicateMember(member);
+        validateDuplicateUserId(member.getUserId());
         memberRepository.save(member);
         return member.getId();
     }
-    
     //중복 회원 검증
-    private void validateDuplicateMember(Member member) {
-        List<Member> findMembers = memberRepository.findByName(member.getName());
-        if(!findMembers.isEmpty())
-            throw new IllegalStateException("중복된 회원으로 아이디를 사용할 수 없습니다.");
+    public void validateDuplicateUserId(String userId) { //unique
+        memberRepository.findByUserId(userId)
+                .ifPresent(member ->  { //Optional + ifPresent
+                    if (member.getUserId().equals(userId)) {
+
+                    }
+                        throw new IllegalStateException("이미 존재하는 회원 ID 입니다.: " + userId);
+                });
     }
-
-    /*회원 조회*/
-    
-    //전체 회원 조회
-    public List<Member> findMembers() {
-        return memberRepository.findAll();
-    }
-
-
-    //회원 이름으로 회원 조회
-    public List<Member> findByName(String name) {
-        return memberRepository.findByName(name);
-    }
-
+    //회원 상태 변경
     @Transactional
-    public void updateMemberStatus(Long id , MemberStatus newStatus) {
-        Member member = memberRepository.findOne(id)
+    public void updateMemberStatus(Long id, MemberStatus newStatus) {
+        Member member = memberRepository.findById(id)
                 .orElseThrow(()-> new IllegalStateException("회원이 존재하지 않습니다."));
         member.changeMemberStatus(newStatus);
     }
+    
+    //중복 닉네임 검증
+    @Transactional
+    public void validateNickname(String nickname) {
+        validateDuplicateNickname(nickname);
+        memberRepository.findByNickname(nickname);
+    }
+
+    public void validateDuplicateNickname(String nickname) {
+        memberRepository.findByNickname(nickname)
+                .ifPresent(member ->  {
+                        throw new IllegalStateException("사용할 수 없는 닉네임 입니다.: " + nickname);
+                    });
+                }
+    }
 
 
-}
+
+
+
+
+
+//    //중복 회원 검증
+//    private void validateDuplicateMember(Member member) {
+//        List<Member> findMembers = memberRepository.findByName(member.getName());
+//        if(!findMembers.isEmpty())
+//            throw new IllegalStateException("중복된 회원으로 아이디를 사용할 수 없습니다.");
+//    }
+//
+//    /*회원 조회*/
+//
+//    //전체 회원 조회
+//    public List<Member> findMembers() {
+//        return memberRepository.findAll();
+//    }
+//
+//
+//    //회원 이름으로 회원 조회
+//    public List<Member> findByName(String name) {
+//        return memberRepository.findByName(name);
+//    }
+
+

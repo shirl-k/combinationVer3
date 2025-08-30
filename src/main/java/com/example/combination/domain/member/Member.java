@@ -20,11 +20,13 @@ import java.util.List;
 public class Member {
     @Id @GeneratedValue
     @Column(name = "member_id")
-    private Long id; //자동생성 id
+    private Long id; //자동생성 id    //PK
 
+    @Column(nullable = false)
     private String name;
 
-    private String userId;
+    @Column(unique = true, nullable = false)
+    private String userId;   //회원 계정 로그인 키
 
     @Enumerated(EnumType.STRING)
     private MembershipGrade membershipGrade;
