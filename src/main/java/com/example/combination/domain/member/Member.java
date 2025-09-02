@@ -33,6 +33,8 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     private MemberStatus memberStatus;  //회원가입(계정 생성)/회원탈퇴
+    
+    private int totalSpent; //누적 금액
 
     @Enumerated(EnumType.STRING)
     private LogInStatus logInStatus;//로그인 성공/로그인 실패/로그아웃
@@ -61,10 +63,21 @@ public class Member {
 
     // ======비즈니스 로직========//
 
-    //Member 변경감지
+    //Member 변경감지 (회원가입/회원탈퇴)
     public void changeMemberStatus(MemberStatus newStatus) {
         this.memberStatus = newStatus;
     }
+    // (로그인/로그아웃)
+    public void changeLogInStatus(LogInStatus newStatus) {
+        this.logInStatus = newStatus;
+    }
+
+    public void addTotalSpent(int amount) {
+        this.totalSpent += amount; //amount: 총액
+
+        
+    }
+    
 
 }
 

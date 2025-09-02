@@ -1,13 +1,13 @@
 package com.example.combination.domain.order;
 
-import com.example.combination.domain.delivery.Delivery;
+
+
 import com.example.combination.domain.delivery.DeliveryAddressForm;
 import com.example.combination.domain.member.Member;
 import com.example.combination.domain.member.MembershipGrade;
+import com.example.combination.domain.payment.PaymentData;
 import com.example.combination.domain.payment.PaymentMethod;
-import com.example.combination.domain.valuetype.DelivAddress;
-import com.example.combination.domain.valuetype.HomeAddress;
-import com.example.combination.dto.DeliveryAddressFormDTO;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,7 +24,7 @@ import java.util.List;
 public class Order {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "orders_id")
     private Long orderId;
 
@@ -37,6 +37,12 @@ public class Order {
 
     private int memberDiscount;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    private PaymentData paymentData;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
+
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus; //주문 자체 흐름. 주문의 큰 그림만 관리 (결제가 실패했다고 해서 Order를 바로 실패로 두진 않음. 아직 살아있을 수 있음.)
@@ -44,9 +50,6 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
-
-    @Enumerated(EnumType.STRING)
-    private PaymentMethod paymentMethod;
 
 
     private LocalDate createOrderDate; //주문 생성 시점
@@ -64,7 +67,7 @@ public class Order {
     //주문 취소 OrderStatus - CANCELLED
 
     //배송지 입력
-    public void getDeliveryAddressForm(DeliveryAddressForm deliveryAddressForm) {
+    public void fillDeliveryAddressForm(DeliveryAddressForm deliveryAddressForm) { //get 은 조회
         this.deliveryAddressForm = deliveryAddressForm;
     }
 
@@ -72,9 +75,9 @@ public class Order {
     public void selectPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
-    
+
     //총 결제 금액
-    public int calculateTotalPrice() {
+    public int calculateLineTotalPrice() {
         return orderItems.stream()
                 .filter(OrderItem::isSelected)
                 .mapToInt(OrderItem::getLineTotal) // unitPrice * quantity
@@ -82,23 +85,21 @@ public class Order {
     }
 
     //최종 주문 스냅샷
-    public static Order createFinalOrder(Member member, List<OrderItem> orderItems, PaymentMethod paymentMethod,
-                                         int finalPrice, int memberDiscount, OrderStatus orderStatus,DeliveryAddressForm deliveryAddressForm,
-                                         int totalPrice, ShoppingCart cart)
-    {
-        return Order.builder()
+    public Order createFinalOrder() {
+        Order order = Order.builder() //파라미터가 많으면 가독성이 좋지 않음
                 .member(member)
                 .membershipGrade(member.getMembershipGrade())
                 .orderStatus(OrderStatus.CREATED)
-                .orderItems(orderItems)
                 .deliveryAddressForm(deliveryAddressForm)
                 .paymentMethod(paymentMethod)
-                .memberDiscount(memberDiscount)  //discountRate
+                .memberDiscount(memberDiscount)
                 .createOrderDate(LocalDate.now())
                 .build();
+
+        orderItems.forEach(order::addOrderItem); // orderItem 추가 시에도 양방향 관계 보장 : builder로 넣으면 양방향 관계 깨질 수 있으니 for문 돌면서 addOrderItem() 호출
+        return order;
     }
 
-    //.calculatedTotalPrice(cart.calculateTotalPrice())
 
     //Order 변경감지
     public void changeOrderStatus(OrderStatus orderStatus) {

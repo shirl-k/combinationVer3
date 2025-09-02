@@ -31,6 +31,11 @@ public class ShoppingCart { //실시간 계산 로직
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Enumerated(EnumType.STRING)
+    private MembershipGrade membershipGrade;
+
+    private int memberDiscount;
+
     @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> cartItems = new ArrayList<>();
 
@@ -86,7 +91,7 @@ public class ShoppingCart { //실시간 계산 로직
         return cartItems.stream()
                 .filter(CartItem::isSelected)
                 .mapToInt(CartItem::getTotalPrice) // unitPrice * quantity
-                .sum();
+                .sum()-memberDiscount;
     }
 
 }

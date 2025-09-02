@@ -8,10 +8,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class PaymentMethodDTO {
+public class PaymentDataDTO {
 
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
-    private int discount;
+    private int memberDiscount;
+
 }

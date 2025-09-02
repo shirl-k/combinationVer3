@@ -1,9 +1,11 @@
 package com.example.combination.service;
 
 
+import com.example.combination.domain.member.LogInStatus;
 import com.example.combination.domain.member.Member;
 import com.example.combination.domain.member.MemberStatus;
 import com.example.combination.domain.valuetype.UserInfo;
+import com.example.combination.exception.MemberNotFoundException;
 import com.example.combination.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,14 +39,21 @@ public class MemberService {
                         throw new IllegalStateException("이미 존재하는 회원 ID 입니다.: " + userId);
                 });
     }
-    //회원 상태 변경
+    //회원 상태 변경 (회원 가입/회원 탈퇴)
     @Transactional
-    public void updateMemberStatus(Long id, MemberStatus newStatus) {
-        Member member = memberRepository.findById(id)
-                .orElseThrow(()-> new IllegalStateException("회원이 존재하지 않습니다."));
+    public void updateMemberStatus(String userId, MemberStatus newStatus) {
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(()-> new MemberNotFoundException(userId));
         member.changeMemberStatus(newStatus);
     }
-    
+    //회원 상태 변경 (로그인/로그아웃)
+    @Transactional
+    public void updateMemberStatus(String userId, LogInStatus newStatus) {
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(()->new MemberNotFoundException(userId));
+        member.changeLogInStatus(newStatus);
+    }
+
     //중복 닉네임 검증
     @Transactional
     public void validateNickname(String nickname) {
