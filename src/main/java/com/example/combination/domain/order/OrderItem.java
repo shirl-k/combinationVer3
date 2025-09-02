@@ -1,9 +1,11 @@
 package com.example.combination.domain.order;
 
-import com.example.combination.domain.item.Item;
+
+import com.example.combination.domain.item.SKU;
 import com.example.combination.dto.CartItemDTO;
 import jakarta.persistence.*;
 import lombok.*;
+
 
 @Getter
 @Setter
@@ -18,40 +20,46 @@ public class OrderItem { //결제 시 스냅샷(결제 당시 금액 영수증�
     @GeneratedValue
     private Long id;
 
-    private Long skuId;  //재고 관리 단위
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sku_id")
+    private SKU sku;
 
     private String name;
 
-    private int unitPriceAtOrder; //주문 당시 단가.  //주문 당시 가격 (상품 가격 변동 고려)
+    private String skuId;
+
+    private int unitPrice; //주문 당시 단가.  //주문 당시 가격 (상품 가격 변동 고려)
 
     private int quantity; //주문 수량
 
-    private int totalPrice;
+    //private int calculatedTotalPrice;
 
     private int discountPrice;
 
-//    private int lineTotal; //unitPriceAtOrder * quantity
+    private int lineTotal; //unitPriceAtOrder * quantity
+
+    private boolean selected = true;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "orders_id")
     private Order order;
 
     //============핵심 비즈니스 로직 ==============//
-    
-    //CartItemDTO를 OrderItem엔티티로 변환 - 스냅샷 변환 팩토리 (영속 데이터-> OrderItemRepository에서 DB 저장 로직)
-//    public static OrderItem fromDTO(CartItemDTO cartItemDTO) {
-//        return OrderItem.builder()
-//                .skuId(cartItemDTO.getId())
-//                .name(cartItemDTO.getItemName())
-//                .unitPriceAtOrder(cartItemDTO.getUnitPrice())
-//                .quantity(cartItemDTO.getQuantity())
-//                .totalPrice(cartItemDTO.getTotalPrice())
-//                .build();
-//
-//    }
+
+
+
+    //CartItemDTO를 OrderItem엔티티로 변환 - 스냅샷 변환 팩토리
+    public static OrderItem fromDTO(CartItemDTO cartItemDTO) {
+        return OrderItem.builder()
+                .skuId(cartItemDTO.getSkuId())
+                .name(cartItemDTO.getSkuName())
+                .quantity(cartItemDTO.getQuantity())
+                .build();
+    }
+
 
     public int getLineTotal() {
-        return unitPriceAtOrder * quantity;
+        return unitPrice * quantity;
     }
 
 

@@ -28,11 +28,5 @@ public class Payment {
 
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
-//    private TotalPrice totalPrice;
-//    private  discountPrice;
-
-
-//    private PricePolicy pricePolicy;
-//    private MembershipPolicy membershipPolicy;
 
 }

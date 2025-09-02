@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@Table(name = "delivAddress")
+@Table(name = "deliv_address")
 public class DelivAddress {
 
     @Id @GeneratedValue

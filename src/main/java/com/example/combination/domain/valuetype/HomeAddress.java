@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@Table(name = "homeAddress")
+@Table(name = "home_address")
 public class HomeAddress {
 
     @Id @GeneratedValue

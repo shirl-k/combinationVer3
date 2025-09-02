@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -17,29 +16,19 @@ import java.util.List;
 @DiscriminatorColumn(name = "dtype")
 @Entity
 @Table(name = "item")
-public abstract class Item {
+public abstract class Item { //상품 카탈로그
 
     @Id @GeneratedValue
-    private Long Id;
+    private Long spuId;  // SPU Id
 
-    private String itemId; //Spu
+    private String name; //상품명
 
-    private String name;
+    private int basePrice;  //기본 가격 (옵션 가산 전)
 
-    private int price;
-
-    private int stockQuantity;
+    private String itemDescription; //상품 상세 설명
 
     @OneToMany
     private List<CategoryItem> categoryItems = new ArrayList<>();
-
-    private String itemDescription;
-
-    private String model;
-    private String style;
-    private String color;
-
-
 
 }
 

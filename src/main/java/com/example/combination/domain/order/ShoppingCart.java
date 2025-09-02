@@ -1,13 +1,18 @@
 package com.example.combination.domain.order;
 
+
 import com.example.combination.domain.member.Member;
 
+import com.example.combination.domain.member.MembershipGrade;
+import com.example.combination.exception.SKUNotFoundException;
 import jakarta.persistence.*;
 import lombok.*;
 
 
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -16,7 +21,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "shoppingCart")
-public class ShoppingCart {
+public class ShoppingCart { //실시간 계산 로직
     @Id
     @GeneratedValue
     @Column(name = "cart_id")
@@ -29,13 +34,8 @@ public class ShoppingCart {
     @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> cartItems = new ArrayList<>();
 
-    private int unitPrice; //주문 당시 가격 (상품 가격 변동 고려)
 
-    private int quantity; //주문 수량
-
-    private int discountPrice; //할인금액 정가-단가
-
-//===========핵심 비즈니스 로직============//
+//===========핵심 비즈니스 로직============//ss
 
     //회원별 장바구니 생성 메서드
     public static ShoppingCart createCart(Member member) {
@@ -55,25 +55,55 @@ public class ShoppingCart {
         cartItem.setShoppingCart(null); //양방향 연관관계 해제를 의미. 객체 그래프 + DB 모두에서 관계가 일관성 있게 해제
     }
 
-    //개별 상품 수량 증가
-    public void increaseQuantity(CartItem cartItem, int quantity) {
-        cartItem.setQuantity(cartItem.getQuantity() + quantity);
+    //skuId로 바로 삭제  - 도메인 편의 메서드
+    public void removeItemBySkuId(String skuId) {
+        CartItem target = cartItems.stream().filter(cartItem -> cartItem.getSku().getSkuId().equals(skuId))
+                .findFirst()
+                .orElseThrow(()-> new SKUNotFoundException("해당 SKU 없음: " + skuId));
+        removeItemFromCart(target);
     }
 
-    //개별 수량 감소
-    public void decreaseQuantity(CartItem cartItem, int quantity) {
-        cartItem.setQuantity(cartItem.getQuantity() - quantity);
+    public Optional<CartItem> findItemBySkuId(String skuId) {
+        return cartItems.stream().filter(cartItem -> cartItem.getSku().getSkuId().equals(skuId))
+                .findFirst();
     }
-
-    //할인금액 포함 총합 금액
-    public int calculateTotal() { //실시간 계산 메서드
+    public void increaseQuantity(String skuId, int amount) {
+        CartItem item = findItemBySkuId(skuId)
+                .orElseThrow(()->new SKUNotFoundException("장바구니에 해당 SKU가 없음.: " + skuId));
+        item.setQuantity(item.getQuantity() + amount);
+    }
+    public void decreaseQuantity(String skuId, int amount) {
+        CartItem item = findItemBySkuId(skuId)
+                .orElseThrow(()->new SKUNotFoundException("장바구니에 해당 SKU가 없음.: " + skuId));
+        item.setQuantity(item.getQuantity() - amount);
+        //수량 <=0 이면 카트 자동 삭제
+        if (item.getQuantity() <= 0) {
+            removeItemFromCart(item);
+        }
+    }
+    //장바구니 총합 금액
+    public int calculateTotalPrice() {
         return cartItems.stream()
                 .filter(CartItem::isSelected)
-                .mapToInt(CartItem::getTotalPrice)
+                .mapToInt(CartItem::getTotalPrice) // unitPrice * quantity
                 .sum();
     }
-    //discountPrice 계산기
+
 }
+    //개별 상품 수량 증가
+//    public void increaseQuantity(CartItem cartItem, int quantity) {
+//        cartItem.setQuantity(cartItem.getQuantity() + quantity);
+//    }
+
+    //개별 수량 감소
+//    public void decreaseQuantity(CartItem cartItem, int quantity) {
+//        cartItem.setQuantity(cartItem.getQuantity() - quantity);
+//    }
+
+
+
+
+
 
 
 

@@ -22,4 +22,8 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     private List<CategoryItem> categoryItems = new ArrayList<>();
+
+    private String model; //모델명
+
+    private String style; //스타일
 }
