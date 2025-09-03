@@ -61,6 +61,11 @@ public class Member {
     @OneToOne(mappedBy = "member",fetch = FetchType.LAZY)
     private ShoppingCart shoppingCart;
 
+    private int availablePoints;
+    private int usedPoints;
+    private int memberPoints;
+    private int usePoints;
+
     // ======비즈니스 로직========//
 
     //Member 변경감지 (회원가입/회원탈퇴)
@@ -74,12 +79,29 @@ public class Member {
 
     public void addTotalSpent(int amount) {
         this.totalSpent += amount; //amount: 총액
-
+        this.membershipGrade = MembershipGrade.calculateGrade(this.totalSpent);
         
     }
-    
+    //포인트 사용 시 차감
+    public void usePoints(int pointsToUse) {
+        if(pointsToUse < this.memberPoints ) {
+            throw new IllegalArgumentException("보유 포인트를 초과했습니다.");
+        }
+        this.memberPoints -= pointsToUse;
 
-}
+    }
+    public int getAvailablePoints() {
+        return this.memberPoints;
+    }   //현재 사용 가능 포인트
+
+
+    //포인트 누적
+    public void addMemberPoints(int newPoints) {
+        this.memberPoints += newPoints;
+    }
+
+    }
+
 
 
 

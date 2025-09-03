@@ -8,6 +8,7 @@ import com.example.combination.domain.member.MembershipGrade;
 import com.example.combination.domain.payment.PaymentData;
 import com.example.combination.domain.payment.PaymentMethod;
 
+import com.example.combination.domain.payment.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -35,7 +37,7 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private MembershipGrade membershipGrade;
 
-    private int memberDiscount;
+    private int memberPoints; //
 
     @OneToOne(fetch = FetchType.LAZY)
     private PaymentData paymentData;
@@ -57,6 +59,12 @@ public class Order {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private DeliveryAddressForm deliveryAddressForm;
 
+    private boolean usePoints;
+    @Getter
+    private int finalPrice; //최종 결제 금액
+    @Getter
+    private int usedPoints; //사용된 포인트
+
     //============핵심 비즈니스 로직==============//
 
     //연관관계 편의 메서드 //orderItem 과 Order 양쪽 동일하게 업데이트
@@ -65,9 +73,13 @@ public class Order {
         orderItem.setOrder(this);
     }
     //주문 취소 OrderStatus - CANCELLED
+    public void removeOrderItem(OrderItem orderItem) {
+        orderItems.remove(orderItem);
+        orderItem.setOrder(null);
+    }
 
     //배송지 입력
-    public void fillDeliveryAddressForm(DeliveryAddressForm deliveryAddressForm) { //get 은 조회
+    public void setDeliveryAddressForm(DeliveryAddressForm deliveryAddressForm) { //get 은 조회
         this.deliveryAddressForm = deliveryAddressForm;
     }
 
@@ -75,13 +87,27 @@ public class Order {
     public void selectPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
-
+    
     //총 결제 금액
     public int calculateLineTotalPrice() {
         return orderItems.stream()
                 .filter(OrderItem::isSelected)
                 .mapToInt(OrderItem::getLineTotal) // unitPrice * quantity
-                .sum()-memberDiscount;
+                .sum();
+    }
+
+    //포인트 사용 여부 - 포인트 차감된 결제 금액
+    public void calculateFinalPrice(Member member) {
+        int total = calculateLineTotalPrice();
+
+        if(usePoints) {
+            int availablePoints = member.getAvailablePoints();
+            this.usedPoints = Math.min(total, availablePoints); //Math.min
+            this.finalPrice = total - this.usedPoints;
+        } else {
+            this.finalPrice = total;
+            this.usedPoints = 0;
+        }
     }
 
     //최종 주문 스냅샷
@@ -92,14 +118,14 @@ public class Order {
                 .orderStatus(OrderStatus.CREATED)
                 .deliveryAddressForm(deliveryAddressForm)
                 .paymentMethod(paymentMethod)
-                .memberDiscount(memberDiscount)
+                .memberPoints(memberPoints)
                 .createOrderDate(LocalDate.now())
+                .usedPoints(usedPoints)
                 .build();
 
         orderItems.forEach(order::addOrderItem); // orderItem 추가 시에도 양방향 관계 보장 : builder로 넣으면 양방향 관계 깨질 수 있으니 for문 돌면서 addOrderItem() 호출
         return order;
     }
-
 
     //Order 변경감지
     public void changeOrderStatus(OrderStatus orderStatus) {

@@ -21,6 +21,4 @@ public class OrderController {
                                                    @RequestBody DeliveryAddressFormDTO deliveryAddressFormDTO) {
 
 
-    }
-    @PostMapping("/api/cart/order/{orderId}/")
 }

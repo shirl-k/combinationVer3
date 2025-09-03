@@ -16,7 +16,7 @@ import java.util.List;
 @DiscriminatorColumn(name = "dtype")
 @Entity
 @Table(name = "item")
-public abstract class Item { //상품 카탈로그
+public abstract class Item { //상품 카탈로그 SPU
 
     @Id @GeneratedValue
     private Long spuId;  // SPU Id
@@ -29,6 +29,25 @@ public abstract class Item { //상품 카탈로그
 
     @OneToMany
     private List<CategoryItem> categoryItems = new ArrayList<>();
+
+
+    private int unitPrice;
+    private int discountRate;
+    private int discountAmount;
+    //private int basePrice;
+    //private Item item;
+
+    //상품 전체 일괄 적용 - 이벤트 할인 금액 계산기
+    public int discountAmount() {
+        discountAmount = basePrice * discountRate/100;
+        return discountAmount;
+    }
+
+    //단가 계산기
+    public int calculateUnitPrice(int discountAmount) {
+        unitPrice = basePrice - discountAmount;
+        return unitPrice;
+    }
 
 }
 

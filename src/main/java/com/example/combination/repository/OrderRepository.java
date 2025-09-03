@@ -26,7 +26,7 @@ public class OrderRepository {
         em.remove(order);
     }
 
-    public Optional<Order> findById(Long orderId) {
+    public Optional<Order> findByOrderId(Long orderId) {
         return Optional.ofNullable(em.find(Order.class, orderId)); //NullPointException 예방 Optional
     }
 

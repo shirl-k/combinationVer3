@@ -49,8 +49,6 @@ public class ShoppingCartService {
 
         //연관관계 편의 메서드로 상품 추가 (shoppingCart 엔티티)
         cart.addItemToCart(cartItem);
-        shoppingCartRepository.save(cart);
-
     }
 
     //상품 삭제 - skuId로 바로 삭제 도메인에서 호출
@@ -59,7 +57,6 @@ public class ShoppingCartService {
                 .orElseThrow(() -> new CartNotFoundException(cartId));
 
         cart.removeItemBySkuId(skuId);
-        shoppingCartRepository.save(cart);
     }
 
     // 수량 수정  - --->

@@ -4,13 +4,11 @@ import com.example.combination.domain.valuetype.DelivAddress;
 import com.example.combination.domain.valuetype.HomeAddress;
 import com.example.combination.dto.DeliveryAddressFormDTO;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
 @Getter
+@Setter
 @NoArgsConstructor
 @Entity
 public class DeliveryAddressForm {
