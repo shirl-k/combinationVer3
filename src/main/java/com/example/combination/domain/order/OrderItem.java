@@ -47,7 +47,6 @@ public class OrderItem { //결제 시 스냅샷(결제 당시 금액 영수증�
     //============핵심 비즈니스 로직 ==============//
 
 
-
     //CartItemDTO를 OrderItem엔티티로 변환 - 스냅샷 변환 팩토리
     public static OrderItem fromDTO(CartItemDTO cartItemDTO) {
         return OrderItem.builder()
@@ -59,36 +58,10 @@ public class OrderItem { //결제 시 스냅샷(결제 당시 금액 영수증�
 
 
     public int getLineTotal() {
+
         return unitPrice * quantity;
     }
-
-
-//    public Order getOrder(Item item, int orderQuantity, int unitPrice) {
-//        return Order.builder()
-//                .item(item)
-//                .orderQuantity(orderQuantity)
-//                .unitPrice(unitPrice)
-//                .build();
-//
-//    }
-    //단건 결제
-
 }
-
-//
-//    public OrderItem createOrderItem(
-//            Item item,
-//            int unitPrice,
-//            int orderQuantity
-//            ) {
-//        return OrderItem.builder()
-//                .item(item)
-//                .unitPrice(unitPrice)
-//                .orderQuantity(orderQuantity)
-//                .build();
-    //OrderItem 주문항목 객체 만듦
-
-
 
 
 

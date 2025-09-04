@@ -11,14 +11,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController("order")
 public class OrderController {
     private final OrderService orderService;
 
-    @PostMapping("/api/cart/order/{orderId}/address")
-    public ResponseEntity<ApiResponse<>> setDelivery(@PathVariable Long orderId,
+    @PostMapping("/api/cart/{cartId}/order/{orderId}/address")
+    public ResponseEntity<ApiResponse<Void>> setDelivery(@PathVariable Long orderId,
                                                    @RequestBody DeliveryAddressFormDTO deliveryAddressFormDTO) {
+
+    }
 
 
 }
