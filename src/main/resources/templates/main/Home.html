@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Stitch Design</title>
+    <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style type="text/tailwindcss">
+        :root {
+            --primary-color: #f0f2f4;
+            --secondary-color: #dbe3eb;
+            --background-color: #ffffff;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --accent-color: #aeb6bf;
+        }
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+        }
+        .nav-link {
+            @apply text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-medium transition-colors duration-200 ease-in-out;
+        }
+        .section-title {
+            @apply text-2xl font-semibold text-[var(--text-primary)] mb-4;
+        }
+        .group:hover .group-hover\:block {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-[var(--background-color)] text-[var(--text-primary)]">
+<div class="relative flex size-full min-h-screen flex-col overflow-x-hidden">
+    <div class="layout-container flex h-full grow flex-col">
+        <header class="bg-white shadow-sm py-4 px-6 flex justify-between items-center border-b border-[var(--primary-color)]">
+            <div class="flex items-center gap-12">
+                <div class="flex items-center gap-3 text-[var(--text-primary)]">
+                    <div class="size-6 text-[var(--text-primary)]">
+                        <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"></path>
+                        </svg>
+                    </div>
+                    <h1 class="text-2xl font-bold tracking-tight">Combination</h1>
+                </div>
+                <nav class="hidden md:flex items-center gap-8 nav_links">
+                    <a class="nav_link" href="#">New Arrivals</a>
+                    <div class="relative group">
+                        <button class="nav_link flex items-center gap-1">
+                            <span>Furniture</span>
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                        </button>
+                        <div class="absolute hidden group-hover:block bg-white shadow-lg rounded-md mt-2 py-2 w-48 z-10">
+                            <a class="block px-4 py-2 text-sm text-[var(--text-secondary)] hover:bg-[var(--primary-color)] hover:text-[var(--text-primary)]" href="#">Living Room</a>
+                            <a class="block px-4 py-2 text-sm text-[var(--text-secondary)] hover:bg-[var(--primary-color)] hover:text-[var(--text-primary)]" href="#">Bedroom</a>
+                            <a class="block px-4 py-2 text-sm text-[var(--text-secondary)] hover:bg-[var(--primary-color)] hover:text-[var(--text-primary)]" href="#">Dining Room</a>
+                            <a class="block px-4 py-2 text-sm text-[var(--text-secondary)] hover:bg-[var(--primary-color)] hover:text-[var(--text-primary)]" href="#">Office</a>
+                        </div>
+                    </div>
+                    <a class="nav_link" href="#">Decor</a>
+                    <a class="nav_link" href="#">Lighting</a>
+                    <a class="nav_link" href="#">Sale</a>
+                </nav>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="hidden md:block">
+                    <label class="relative">
+                        <span class="sr-only">Search</span>
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+<svg aria-hidden="true" class="h-5 w-5 text-[var(--text-secondary)]" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" fill-rule="evenodd"></path>
+</svg>
+</span>
+                        <input class="w-full p-3 pl-10 border border-[var(--primary-color)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--accent-color)] focus:border-transparent bg-[var(--background-color)]" placeholder="Search" type="text"/>
+                    </label>
+                </div>
+                <button class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors">LogIn</button>
+                <button class="p-2 rounded-full hover:bg-[var(--primary-color)] transition-colors">
+                    <svg class="h-6 w-6 text-[var(--text-secondary)]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                </button>
+                <button class="p-2 rounded-full hover:bg-[var(--primary-color)] transition-colors">
+                    <svg class="h-6 w-6 text-[var(--text-secondary)]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.658-.463 1.243-1.117 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.116 1.007zM8.25 10.5a2.25 2.25 0 114.5 0 2.25 2.25 0 01-4.5 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+        <main class="container mx-auto px-4 py-8 max-w-7xl">
+            <div class="relative w-full h-[500px] rounded-xl overflow-hidden mb-12">
+                <div class="absolute inset-0 bg-cover bg-center" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 25%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuAkqEfC4r1PE7YlO8xE2DqS1X4wZbwIPzDJ2pw0p8IS2oDQn7mwomWdo7D67GREOVZ3QETVbVEnFUQ_3qTSS3uhiRo4Yun4Sjf0As8f8QbeOFWNIICNYNL8njHU1OJbCH4dYtF-bdWarD_P9P1SWBa1x3Qfm-DCI9KHFty034vygVZhHqsjNcjOcpVvkpzcBLxP0eTzv3WxiNx3x26GeVEfUm7wCwFvOELntJs2xTXKZpOHmXyA-HfUUuoKG4-qS9tzqEcv_sECXGpU");'></div>
+                <div class="absolute bottom-5 left-1/2 -translate-x-1/2 flex justify-center gap-2">
+                    <div class="size-2 rounded-full bg-white"></div>
+                    <div class="size-2 rounded-full bg-white/50"></div>
+                    <div class="size-2 rounded-full bg-white/50"></div>
+                    <div class="size-2 rounded-full bg-white/50"></div>
+                    <div class="size-2 rounded-full bg-white/50"></div>
+                </div>
+                <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-8">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-4">Timeless Design, Modern Living</h2>
+                    <p class="text-lg mb-8 max-w-2xl">Discover curated collections that bring comfort, style, and personality to your home.</p>
+                    <button class="bg-white text-[var(--text-primary)] py-3 px-8 rounded-md hover:bg-[var(--primary-color)] transition-colors duration-200 ease-in-out font-semibold">Shop Now</button>
+                </div>
+            </div>
+            <section class="mb-12">
+                <h2 class="section-title text-center mb-8">Shop by Room</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="group">
+                        <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 ease-in-out" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDkMxY7-b6QLYYmSuRWfV_kIWxf-y4mMzohKDHYD-X4cYuKJXGU5Tpk0VA0PcLOsRiP7LDFO-pK8XJx5lC0ld9NncwrLvwiaFmoWnG_HStbKO-WmwfAEC3ul9H3VDafMyI0BbvXNeu9nHagiBJBLVNoZITEq2dCI7PYvBnH0d1hSEtursT80hoXJm1YOahvAgob5LvhYGfvE973e9jHmRyJuMK7SupoyeGaUvp6mSg9JPlClAbR3wFiBsi22ObjT55yrCdkPTrFv7bK");'></div>
+                        <p class="text-lg font-semibold mt-4 text-center text-[var(--text-primary)] group-hover:text-[var(--accent-color)] transition-colors">Living Room</p>
+                    </div>
+                    <div class="group">
+                        <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 ease-in-out" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAaCE-JdJLXZ8Du-U3X1vBJcR3Ab2devgpRFgiJuFXI1Rdz0mBhDtnmfz2HWUM-NP58S6HkR7u7fAw824DvVtQNoca9Iuuda1rhUXOwuEovWMW1RFpk4MK9emYRctzhWbf5RQj4hyzYNONluhZnDm-QUU-B3OdABDVT-v7eRCjiMHeNp0wSPfQE6-MCJNInSgUUEcB6pK3cUntrnBIsHFfHfvJ-P6fN1R-96Xf7--JswTf_1SZbs4FIYmsdOc9DtxSKnbhNLIFfwwcI");'></div>
+                        <p class="text-lg font-semibold mt-4 text-center text-[var(--text-primary)] group-hover:text-[var(--accent-color)] transition-colors">Bedroom</p>
+                    </div>
+                    <div class="group">
+                        <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 ease-in-out" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC5Cw4L7tZ9tIpWiKvuml0winviAJ8Cy41_Civa3ivgD9Zn6VyIdpOi28ArECT_CrbG0pnVFz57DIPZLSnLcBQqDPTgG1kABoCjf3UpisMnu-RyK840p--wk4ioofDOce2_ACNvHyOE72csrg704n4T45EYa7c2J0H6dBqmQ7zaeNMW7a50QfJColjZGiVvtJUgVhqmg69XSVjK1lulsZGuXa3XrAcg3jVV_ANHb5zW6QHA_aKav2znadnNCRkAM9zLe_6DcxdUxucV");'></div>
+                        <p class="text-lg font-semibold mt-4 text-center text-[var(--text-primary)] group-hover:text-[var(--accent-color)] transition-colors">Dining Room</p>
+                    </div>
+                    <div class="group">
+                        <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 ease-in-out" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDHwib48SFrvyW9gJgo4WQYtvQcVgWIRiQtN27cU9PanqGjqPFY_C5FRxNCbn7QCCNTJBr5qiS5fBvvauxzPWVugNBMe7adouI_txRflfy4LFgN9DNTIav7MgHP7vEiQLGWoib-YBLoNW8tJkSqgHjN2sHVjrhnH2OWFAv8dpuGaNednZINuts_O3Ejgt8xKMd_A5J3FNl7xdsCA-4LsD2H_1uk3_caqfFBdwJL9QPmDLJrY0Mo3ajoLLonStklw_OcYgubGWONskrz");'></div>
+                        <p class="text-lg font-semibold mt-4 text-center text-[var(--text-primary)] group-hover:text-[var(--accent-color)] transition-colors">Kitchen</p>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-12">
+                <h2 class="section-title text-center mb-8">Featured Collections</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="flex flex-col gap-4 group">
+                        <div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl shadow-sm overflow-hidden" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDWmU0nCgUPLDFIbyA7UhAdlPmF4CPnufHsIqSXFP_U6jk0d2ISQ7KKAfLesN6ey8TrX_1wJhFkToejCQAQQqPjEHwe5q4_5KFYDf0vyEX5tnW2Ic0rEZKFfjXTTTAuHXSkumIhWurZQLQsu_26RTwZ6xGikD8GeUL-6p6hUja4Jj0Ow7Dxg-rmjAvo6jSBPmpevX2h7jXmTIEiJhqRhb2hmcvxWZTUMzbMDhvu2i8pNm6XB5ZFRWGUCTbfMrIBarvTxfLlDknc9TAx");'></div>
+                        <div>
+                            <p class="text-lg font-semibold text-[var(--text-primary)]">The Modern Living Collection</p>
+                            <p class="text-base text-[var(--text-secondary)]">Explore our curated selection of modern living room furniture.</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-4 group">
+                        <div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl shadow-sm overflow-hidden" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAMtAZotDWuCs27GXTdJeRwH9gYV5Py2LgInDPX13RinXvOfofKq6PU6VYk482wX0tX6HKgEHd91O6iezH5RrSICMQBpgx0GQSZWlPpicNM5gdK-eqBtfK0rLoZ5Y1wgDxaZVJ7K6-FSNPSVOFGeQH8pKidQWNGupSjVfgv8wkpbe9kaM7148Wf0kKjXdXfc-0B26WiQOY7ETc09XBjqf0MusIgz-rvoz4mAbtxfKWrv9yrtYAOLg4Yopo1sqBKGRUbbA1_FczL1yJy");'></div>
+                        <div>
+                            <p class="text-lg font-semibold text-[var(--text-primary)]">The Minimalist Dining Collection</p>
+                            <p class="text-base text-[var(--text-secondary)]">Discover our range of minimalist dining tables and chairs.</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-4 group">
+                        <div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl shadow-sm overflow-hidden" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAKwUMnE_2Qunh3wlIOkVVWWD_-hnLENKbOhZRCo9WjOqSoaT2nyjAi5w-eS3wfkslcBEz_U1fzrlsbNnFcdBNjuvZbuP6UMU95QYT6iymntJTLFZF0L7kW5dPO62S6oROcHr7oH1BybYnLrXLJP3TJAKEzYxV395yIVExcU67mFBIyTUgpj2OkKfZ0Gpvx2ludYllvAAj1VXyyXpzzhwzKgVVZIvfoKAihMCvaglIoDRmJSAoh0ldjdJqDRDJGvcjS7KminpoQRRqV");'></div>
+                        <div>
+                            <p class="text-lg font-semibold text-[var(--text-primary)]">The Ambient Lighting Collection</p>
+                            <p class="text-base text-[var(--text-secondary)]">Illuminate your space with our stylish floor lamps.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-12">
+                <div class="relative w-full h-[600px] rounded-xl overflow-hidden group">
+                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 ease-in-out group-hover:scale-105" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAZzAPtgy8g4gOtViFNcUD1UH1OkINDqORenHyvcz46GLRvWYiYRMS6_RRwixrGIjbrdIYJj8IquCl-suMB1AkV_6X2paeBbdZ_YK_w7WFWNTAcvdnHWlXDbSd5pl4qprBdVgfd4EY1t7PC8iX8aPockDEz_idVoJPducoB-XD0A9j8HwDg0LRvzszLsXPCdiT7O7cJBx6XSXdoydT4VxdrLfTQtFSVJXsPHnFndQRBaIHdWJLBBhQMD408Mtt9jig9spSj0SISmOw3");'></div>
+                    <div class="absolute inset-0 bg-black/40"></div>
+                    <div class="relative h-full flex flex-col justify-end p-12 text-white">
+                        <h3 class="text-4xl font-bold mb-4">Modern Black Interior</h3>
+                        <p class="text-lg max-w-lg mb-6">Experience the epitome of modern sophistication with our latest collection, featuring sleek lines and a bold black palette.</p>
+                        <button class="bg-white text-black py-3 px-8 rounded-md hover:bg-gray-200 transition-colors duration-200 ease-in-out font-semibold w-fit">Explore Collection</button>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <h2 class="section-title text-center mb-8">Customer Favorites</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="flex flex-col gap-3">
+                        <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl shadow-sm" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDbmt2zhk3HgahenAqnlJswzSvqa75-Z2lMrzLAWcXsEebD8_3_a3dBi8kXQNBAkJHskWyDvBiTK-RWxo8BA1d6FEd59CSTLq_RmUWcM5QhWtMdVA2pu4rW7gi2TASsHhGmYgwb7Mjk-1Yz5YYuXLBWxovTN-8G-A7bxxCCyAaImTznF9eWKPqSSCwkbFDReZKpkj-VfGyW1AvZ5cahM9c9FhazsbNuzEMx9j6sHMi8Zo7V--C1uT7iSlCJdtSDcf8asV27_MUqx6_a");'></div>
+                        <div>
+                            <p class="text-base font-medium text-[var(--text-primary)]">Cozy Knit Throw Blanket</p>
+                            <p class="text-sm text-[var(--text-secondary)]">Wrap yourself in comfort.</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-3">
+                        <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl shadow-sm" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB3vvFCDpUODiyIFGykmqLmxbQogMqLYv0_4vdMvtIDRWFGl9RFe8ck0kIWpCD-hxlnzFoOqApLlJU5qb3WgAoyBpn6l5LmbUBPmgTXaKTxyZFQy6OkgMnEgFjMkuyU31KfRfx3OfsqfQZIDffSw9HbqQZ2pa78o_zYByz1tnhNsa_aEoBaqynbEnR9PfeeUy0uenE9_TcEAPV88pq_EEJBzfLWU38a6sc3mO0-_IRLbgYUixRtzQHiA1PCclsOx0qxy7wuWvmK-zLZ");'></div>
+                        <div>
+                            <p class="text-base font-medium text-[var(--text-primary)]">Geometric Pattern Rug</p>
+                            <p class="text-sm text-[var(--text-secondary)]">Add a touch of style.</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-3">
+                        <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl shadow-sm" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAXpucKiQ_ysG7HJa0GL49RVvsZUV_I4TMOITnIgk_GrKCaUqKRhSAjFnG0w2XsBxayOWi8HliuPpZyQNgocA3ZTDXWmxrzNbmKLETXIHfcggbhqjyI7nIuqDygM7WzNGKEwu851Y2fsLFE0GusN7MSbf99HAeh9jpHJ76UbQn-MFoVJYsONzZWKKOSbmZ140p00qnRDGvHdvGC1llAgniO7pub3e2SmZjuuPwVFun8gjxHC44oP5MWBWyzZMif_fM9hRxvKPUDg5fp");'></div>
+                        <div>
+                            <p class="text-base font-medium text-[var(--text-primary)]">Ceramic Table Lamp</p>
+                            <p class="text-sm text-[var(--text-secondary)]">Brighten up your space.</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-3">
+                        <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl shadow-sm" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD9-vGxO-ZL4jJc6yT-uZL7T4FJbRIKxqZb-aLnyTMgGfqFpvaejqpv7hIlm3oYdTBu4-fTrU4jqfxYMzt-gvkQ5oBNwRhQaQ-WQXJX__YiCY0lV3MX_XEO2tsm_C6zKlVCc58zjVflHIndptl3E1yLlac1oO_aJv97h05FdXekdBCD2PJr7eCKdew3zwZuySHEtFLXHGaoor076w1DmSJSOqWIsjwOgQWodZUPR8FfaACqGtnGXrnenk67gra0X2ijpdayq8pTsyRO");'></div>
+                        <div>
+                            <p class="text-base font-medium text-[var(--text-primary)]">Abstract Wall Art</p>
+                            <p class="text-sm text-[var(--text-secondary)]">Enhance your walls.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer class="bg-[var(--primary-color)] text-[var(--text-secondary)] py-12">
+            <div class="container mx-auto px-4 max-w-7xl">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center md:text-left">
+                    <div>
+                        <h3 class="text-lg font-semibold text-[var(--text-primary)] mb-4">Combination</h3>
+                        <p class="text-sm">Creating beautiful and comfortable living spaces for everyone.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-[var(--text-primary)] mb-4">Shop</h3>
+                        <ul class="space-y-2">
+                            <li><a class="hover:text-[var(--text-primary)] transition-colors" href="#">New Arrivals</a></li>
+                            <li><a class="hover:text-[var(--text-primary)] transition-colors" href="#">Furniture</a></li>
+                            <li><a class="hover:text-[var(--text-primary)] transition-colors" href="#">Decor</a></li>
+                            <li><a class="hover:text-[var(--text-primary)] transition-colors" href="#">Sale</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-[var(--text-primary)] mb-4">Support</h3>
+                        <ul class="space-y-2">
+                            <li><a class="hover:text-[var(--text-primary)] transition-colors" href="#">Contact Us</a></li>
+                            <li><a class="hover:text-[var(--text-primary)] transition-colors" href="#">FAQ</a></li>
+                            <li><a class="hover:text-[var(--text-primary)] transition-colors" href="#">Shipping &amp; Returns</a></li>
+                            <li><a class="hover:text-[var(--text-primary)] transition-colors" href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-[var(--text-primary)] mb-4">Follow Us</h3>
+                        <div class="flex justify-center md:justify-start space-x-4">
+                            <a class="text-[var(--text-secondary)] hover:text-[var(--text-primary)]" href="#">
+                                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.011 3.584-.069 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.584-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.85s.011-3.584.069-4.85c.149-3.225 1.664-4.771 4.919-4.919C8.416 2.175 8.796 2.163 12 2.163zm0 1.44c-3.116 0-3.486.012-4.71.068-2.733.124-3.953 1.35-4.073 4.073-.056 1.224-.067 1.595-.067 4.71s.011 3.486.067 4.71c.12 2.723 1.34 3.949 4.073 4.073 1.224.056 1.594.067 4.71.067s3.486-.011 4.71-.067c2.723-.124 3.949-1.35 4.073-4.073.056-1.224.067-1.595.067-4.71s-.011-3.486-.067-4.71c-.124-2.723-1.35-3.953-4.073-4.073C15.486 3.614 15.116 3.603 12 3.603zM12 7.297c-2.598 0-4.703 2.105-4.703 4.703s2.105 4.703 4.703 4.703 4.703-2.105 4.703-4.703-2.105-4.703-4.703-4.703zm0 7.75c-1.685 0-3.047-1.362-3.047-3.047S10.315 8.953 12 8.953s3.047 1.362 3.047 3.047-1.362 3.047-3.047 3.047zm4.905-7.297c-.742 0-1.344.602-1.344 1.344s.602 1.344 1.344 1.344 1.344-.602 1.344-1.344-.602-1.344-1.344-1.344z"></path>
+                                </svg>
+                            </a>
+                            <a class="text-[var(--text-secondary)] hover:text-[var(--text-primary)]" href="#">
+                                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M22.46 6c-.77.35-1.6.58-2.46.67.88-.53 1.56-1.37 1.88-2.38-.83.49-1.74.85-2.7 1.03C18.4 4.5 17.1 4 15.7 4c-2.38 0-4.3 1.92-4.3 4.3 0 .34.04.67.11.98C8.2 9.09 5.2 7.54 3.1 5.2c-.34.58-.53 1.26-.53 2 0 1.5.76 2.8 1.93 3.56-.7-.02-1.37-.21-1.95-.54v.05c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.94.07 4.3 4.3 0 0 0 4 3c-1.47 1.14-3.33 1.82-5.35 1.82-.35 0-.69-.02-1.03-.06C3.9 20.25 6.1 21 8.5 21c7.8 0 12.07-6.47 12.07-12.07 0-.18 0-.37-.01-.55.83-.6 1.56-1.35 2.14-2.22z"></path>
+                                </svg>
+                            </a>
+                            <a class="text-[var(--text-secondary)] hover:text-[var(--text-primary)]" href="#">
+                                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm1.75 17.5h-3.5V12h3.5v5.5zm-1.75-6.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zM19 17.5h-3.5v-5.25c0-.9-.675-1.5-1.5-1.5s-1.5.6-1.5 1.5V17.5h-3.5V9h3.5v1.05c.45-.75 1.5-1.55 3.25-1.55 2.5 0 4.25 1.625 4.25 4.75V17.5z"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t border-[var(--secondary-color)] mt-8 pt-8 text-center text-sm">
+                    <p>© 2025 Combination. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+</body></html>
