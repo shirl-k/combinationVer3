@@ -3,17 +3,14 @@ package com.example.combination.domain.item;
 import com.example.combination.domain.category.CategoryItem;
 import com.example.combination.domain.order.CartItem;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 @DiscriminatorValue("sku")

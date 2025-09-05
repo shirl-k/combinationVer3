@@ -7,7 +7,7 @@ import lombok.*;
 @DiscriminatorValue("Table")
 @Getter
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class Table extends Item {

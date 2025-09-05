@@ -5,11 +5,11 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
-@NoArgsConstructor//매개변수 없는 생성자
+@NoArgsConstructor(access = AccessLevel.PROTECTED)//매개변수 없는 생성자
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "categoryItem")
+@Table(name = "category_item")
 public class CategoryItem {
 
     @Id @GeneratedValue

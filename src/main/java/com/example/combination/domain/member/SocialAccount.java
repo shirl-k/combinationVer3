@@ -8,11 +8,11 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "socialAccount")
+@Table(name = "social_account")
 public class SocialAccount {
 
     @Id @GeneratedValue
-    @Column(name = "socialAccount_id")
+    @Column(name = "social_account_id")
     private Long id;
 
     private String accoutInfo;

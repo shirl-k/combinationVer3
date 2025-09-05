@@ -7,7 +7,7 @@ import lombok.*;
 @DiscriminatorValue("Curtain")
 @Getter
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class Curtain extends Item {

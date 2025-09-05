@@ -13,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "orderItem")
+@Table(name = "order_item")
 public class OrderItem { //결제 시 스냅샷(결제 당시 금액 영수증처럼 그대로 찍어내기. 가격 변동 고려)
 
     @Id

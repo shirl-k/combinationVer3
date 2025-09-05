@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
@@ -54,7 +55,7 @@ public class Order {
 
         private LocalDate createOrderDate; //주문 생성 시점
 
-        @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+        @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
         private DeliveryAddressForm deliveryAddressForm;
 
         private boolean usePoints;

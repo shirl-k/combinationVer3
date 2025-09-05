@@ -7,7 +7,7 @@ import lombok.*;
 @DiscriminatorValue("Couch")
 @Getter
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class Couch extends Item {

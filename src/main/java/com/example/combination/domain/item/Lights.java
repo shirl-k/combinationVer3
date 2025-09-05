@@ -6,7 +6,7 @@ import lombok.*;
 @DiscriminatorValue("Lights")
 @Getter
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class Lights extends Item {

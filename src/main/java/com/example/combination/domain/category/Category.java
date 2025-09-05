@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor//매개변수 없는 생성자
+@NoArgsConstructor(access = AccessLevel.PROTECTED)//매개변수 없는 생성자
 @AllArgsConstructor
 @Builder
 @Entity

@@ -1,10 +1,7 @@
 package com.example.combination.service;
 
-import com.example.combination.domain.delivery.Delivery;
 import com.example.combination.domain.delivery.DeliveryAddressForm;
-import com.example.combination.domain.delivery.DeliveryStatus;
 import com.example.combination.domain.member.Member;
-import com.example.combination.domain.member.MembershipGrade;
 import com.example.combination.domain.order.Order;
 import com.example.combination.domain.order.OrderItem;
 import com.example.combination.domain.order.OrderStatus;
@@ -12,14 +9,11 @@ import com.example.combination.domain.payment.PaymentMethod;
 import com.example.combination.exception.OrderNotFoundException;
 import com.example.combination.repository.MemberRepository;
 import com.example.combination.repository.OrderRepository;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Transactional

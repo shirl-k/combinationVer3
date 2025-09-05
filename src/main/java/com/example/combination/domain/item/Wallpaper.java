@@ -7,7 +7,7 @@ import lombok.*;
 @DiscriminatorValue("Wallpaper")
 @Getter
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class Wallpaper extends Item {

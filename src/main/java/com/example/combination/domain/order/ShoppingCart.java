@@ -15,12 +15,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Getter
-@Setter
-@NoArgsConstructor//매개변수 없는 생성자
+@NoArgsConstructor(access = AccessLevel.PROTECTED)//매개변수 없는 생성자
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "shoppingCart")
+@Table(name = "cart")
 public class ShoppingCart { //실시간 계산 로직
     @Id
     @GeneratedValue
