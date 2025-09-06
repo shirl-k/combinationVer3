@@ -1,18 +1,18 @@
 package com.example.combination.dto;
 
-import com.example.combination.domain.valuetype.DelivAddress;
-import com.example.combination.domain.valuetype.HomeAddress;
+import com.example.combination.domain.valuetype.DeliveryAddress;
 
+import jakarta.persistence.Column;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class DeliveryAddressFormDTO {
 
-    private final HomeAddress homeAddress;
+    private final DeliveryAddress deliveryAddress;
 
-    private final DelivAddress delivAddress;
-
+    private final String deliveryDescription;
 
 }

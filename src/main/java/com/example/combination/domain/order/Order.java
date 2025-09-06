@@ -1,19 +1,18 @@
 package com.example.combination.domain.order;
 
-
-
-import com.example.combination.domain.delivery.DeliveryAddressForm;
+import com.example.combination.domain.delivery.DeliveryForm;
 import com.example.combination.domain.member.Member;
 import com.example.combination.domain.member.MembershipGrade;
-import com.example.combination.domain.payment.PaymentData;
+import com.example.combination.domain.movingService.MovingServiceForm;
 import com.example.combination.domain.payment.PaymentMethod;
-
-import com.example.combination.domain.payment.PaymentStatus;
+import com.example.combination.domain.valuetype.DeliveryAddress;
+import com.example.combination.domain.valuetype.HomeAddress;
+import com.example.combination.domain.valuetype.MovingServiceAddress;
+import com.example.combination.dto.DeliveryAddressFormDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +37,6 @@ public class Order {
         @Enumerated(EnumType.STRING)
         private MembershipGrade membershipGrade;
 
-//        @OneToOne(fetch = FetchType.LAZY)
-//        private PaymentData paymentData;
 
         @Enumerated(EnumType.STRING)
         private PaymentMethod paymentMethod;
@@ -55,11 +52,39 @@ public class Order {
 
         private LocalDate createOrderDate; //주문 생성 시점
 
+
+    //=========================================================//
+
+        @Embedded
+        private HomeAddress homeAddress;
+
+        @Embedded
+        private MovingServiceAddress movingServiceAddress;
+
+        @Embedded
+        private DeliveryAddress deliveryAddress;
+
+        @JoinColumn(name = "delivery_form_id")
         @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
-        private DeliveryAddressForm deliveryAddressForm;
+        private DeliveryForm deliveryForm;
+
+        @JoinColumn(name = "moving_service_form_id")
+        @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
+        private MovingServiceForm movingServiceForm;
+
+        private int movingServicePrice;
+
+   //==========================================================//
+//        @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
+//        private DeliveryAddressForm deliveryAddressForm;
+
+        @Column(length = 500)
+        private String deliveryDescription;
+
+        @Column(length = 500)
+        private String movingServiceDescription;
 
         private boolean usePoints;
-
 
         private int finalPrice;
 
@@ -78,10 +103,40 @@ public class Order {
             orderItem.setOrder(null);
         }
 
-        //배송지 입력
-        public final void fillDeliveryAddressForm(DeliveryAddressForm deliveryAddressForm) { //get 은 조회
-            this.deliveryAddressForm = deliveryAddressForm;
+        private boolean movingService;
+
+        public void setDeliveryForm(DeliveryForm deliveryForm, MovingServiceForm movingServiceForm) {
+                if(movingService) { //이사 서비스 이용 시 
+                    if (movingServiceForm == null) {
+                        throw new IllegalStateException("이사 서비스 이용 시 현 주소지와 배송지 주소 입력이 필수입니다.");
+                    }//기존 주소와 새 주소, 배송 요청사항
+                    this.homeAddress = movingServiceForm.getHomeAddress();
+                    this.movingServiceAddress = movingServiceForm.getMovingServiceAddress();
+                    this.movingServiceDescription = movingServiceForm.getMovingServiceDescription();
+
+                    // 홈/비즈니스용 배송만 서비스 필드 초기화
+                    this.deliveryAddress = null;
+                    this.deliveryDescription = null;
+
+                } else { //홈/비즈니스 용 서비스 이용 시
+                    if (deliveryForm == null) {
+                        throw new IllegalStateException("배송지 입력은 필수입니다.");
+                    }
+                    //배송지와 배송지 옵션
+                    this.deliveryAddress = deliveryForm.getDeliveryAddress();
+                    this.deliveryDescription = deliveryForm.getDeliveryDescription();
+
+                    //이사 서비스 필드 초기화
+                    this.movingServiceAddress = null;
+                    this.movingServiceDescription = null;
+                }
         }
+
+//        public void setMovingServiceForm(MovingServiceForm entity) {
+//            this.movingServiceAddress = entity.getMovingServiceAddress();
+//            this.homeAddress = entity.getHomeAddress();
+//            this.movingServiceDescription = entity.getMovingServiceDescription();
+//        }
 
         //결제 방식
         public void selectPaymentMethod(PaymentMethod paymentMethod) {
@@ -90,10 +145,17 @@ public class Order {
 
         //총 결제 금액
         public int calculateLineTotalPrice() {
-            return orderItems.stream()
-                    .filter(OrderItem::isSelected)
-                    .mapToInt(OrderItem::getLineTotal) // unitPrice * quantity
-                    .sum();
+            if (movingService == false) {
+                return orderItems.stream()
+                        .filter(OrderItem::isSelected)
+                        .mapToInt(OrderItem::getLineTotal) // unitPrice * quantity
+                        .sum();
+            } else {
+                return orderItems.stream()
+                        .filter(OrderItem::isSelected)
+                        .mapToInt(OrderItem::getLineTotal) // unitPrice * quantity
+                        .sum() + movingServicePrice ;
+            }
         }
 
         //포인트 사용 여부 - 포인트 차감된 결제 금액
@@ -119,14 +181,14 @@ public class Order {
         //최종 주문 스냅샷
 
     public static Order createFinalOrder(Member member, List<OrderItem> orderItems, PaymentMethod paymentMethod
-            ,DeliveryAddressForm deliveryAddressForm, OrderStatus orderStatus, boolean usePoints,int usedPoints) {
+            , DeliveryForm deliveryForm, OrderStatus orderStatus, boolean usePoints, int usedPoints) {
         Order order = Order.builder()
                 .member(member)
                 .membershipGrade(member.getMembershipGrade())
                 .orderStatus(OrderStatus.CREATED)
                 .orderItems(new ArrayList<>(orderItems))
                 .usePoints(usePoints)
-                .deliveryAddressForm(deliveryAddressForm)
+                .deliveryForm(deliveryForm)
                 .paymentMethod(paymentMethod)
                 .createOrderDate(LocalDate.now())
                 .usedPoints(usedPoints)
@@ -135,39 +197,6 @@ public class Order {
         orderItems.forEach(order::addOrderItem); // orderItem 추가 시에도 양방향 관계 보장 : builder로 넣으면 양방향 관계 깨질 수 있으니 for문 돌면서 addOrderItem() 호출
         return order;
     }
-
-//        public static Order createFinalOrder(Member member, OrderStatus orderStatus,PaymentMethod paymentMethod
-//                                        ,List<OrderItem> orderItems, boolean usePoints, DeliveryAddressForm deliveryAddressForm) {
-//
-//            Order order = Order.builder()
-//                    .member(member)
-//                    .membershipGrade(member.getMembershipGrade())
-//                    .orderStatus(orderStatus)
-//                    .orderItems(new ArrayList<>(orderItems))
-//                    .createOrderDate(LocalDate.now())
-//                    .usePoints(usePoints)
-//                    .deliveryAddressForm(deliveryAddressForm)
-//                    .paymentMethod(paymentMethod)
-//                    .build();
-//
-//            orderItems.forEach(order::addOrderItem); // orderItem 추가 시에도 양방향 관계 보장 : builder로 넣으면 양방향 관계 깨질 수 있으니 for문 돌면서 addOrderItem() 호출
-//            return order;
-//        }
-//        public Order createFinalOrder() {
-//            Order order = Order.builder() //파라미터가 많으면 가독성이 좋지 않음
-//                    .member(member)
-//                    .membershipGrade(member.getMembershipGrade())
-//                    .orderStatus(OrderStatus.CREATED)
-//                    .orderItems(new ArrayList<>(orderItems))
-//                    .usedPoints(usedPoints)
-//                    .deliveryAddressForm(deliveryAddressForm)
-//                    .paymentMethod(paymentMethod)
-//                    .createOrderDate(LocalDate.now())
-//                    .build();
-//
-//            orderItems.forEach(order::addOrderItem); // orderItem 추가 시에도 양방향 관계 보장 : builder로 넣으면 양방향 관계 깨질 수 있으니 for문 돌면서 addOrderItem() 호출
-//            return order;
-//        }
 
         //Order 변경감지
         public void changeOrderStatus(OrderStatus orderStatus) {

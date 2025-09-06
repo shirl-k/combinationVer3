@@ -38,6 +38,8 @@ public class ShoppingCart { //실시간 계산 로직
     @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> cartItems = new ArrayList<>();
 
+    private boolean movingService;
+    private int movingServicePrice;
 
 //===========핵심 비즈니스 로직============//ss
 
@@ -85,13 +87,23 @@ public class ShoppingCart { //실시간 계산 로직
             removeItemFromCart(item);
         }
     }
-    //장바구니 총합 금액
-    public int calculateTotalPrice() {
-        return cartItems.stream()
-                .filter(CartItem::isSelected)
-                .mapToInt(CartItem::getTotalPrice) // unitPrice * quantity
-                .sum()-memberDiscount;
+    //장바구니 총합 금액 (예상 지불 금액)
+        public int calculateTotalPrice() {
+        if (!movingService) {
+            return cartItems.stream()
+                    .filter(CartItem::isSelected)
+                    .mapToInt(CartItem::getTotalPrice) // unitPrice * quantity
+                    .sum()-memberDiscount;
+        } else {
+            return cartItems.stream()
+                    .filter(CartItem::isSelected)
+                    .mapToInt(CartItem::getTotalPrice) // unitPrice * quantity
+                    .sum()-memberDiscount + movingServicePrice;
+        }
     }
+
+    //서비스 옵션 선택
+
 
 }
     //개별 상품 수량 증가

@@ -1,6 +1,6 @@
 package com.example.combination.service;
 
-import com.example.combination.domain.delivery.DeliveryAddressForm;
+import com.example.combination.domain.delivery.DeliveryForm;
 import com.example.combination.domain.member.Member;
 import com.example.combination.domain.order.Order;
 import com.example.combination.domain.order.OrderItem;
@@ -35,8 +35,8 @@ import java.util.List;
             //주문 생성 : CREATED OrderService: (흐름/연동)
 
             public Order createOrder(Member member, List<OrderItem> orderItems, PaymentMethod paymentMethod
-                    ,DeliveryAddressForm deliveryAddressForm, OrderStatus orderStatus, boolean usePoints, LocalDateTime createOrderDate, int usedPoints) {
-                Order order = Order.createFinalOrder(member, orderItems,paymentMethod,deliveryAddressForm,orderStatus,usePoints,usedPoints);
+                    , DeliveryForm deliveryForm, OrderStatus orderStatus, boolean usePoints, LocalDateTime createOrderDate, int usedPoints) {
+                Order order = Order.createFinalOrder(member, orderItems,paymentMethod, deliveryForm,orderStatus,usePoints,usedPoints);
 
                 order.calculateFinalPrice(member); //최종 금액 계산(포인트 반영)
                 orderRepository.save(order);

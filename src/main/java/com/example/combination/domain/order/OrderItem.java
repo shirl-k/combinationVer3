@@ -44,6 +44,8 @@ public class OrderItem { //결제 시 스냅샷(결제 당시 금액 영수증�
     @JoinColumn(name = "orders_id")
     private Order order;
 
+    private int movingServicePrice;
+
     //============핵심 비즈니스 로직 ==============//
 
 
@@ -61,6 +63,7 @@ public class OrderItem { //결제 시 스냅샷(결제 당시 금액 영수증�
 
         return unitPrice * quantity;
     }
+
 }
 
 

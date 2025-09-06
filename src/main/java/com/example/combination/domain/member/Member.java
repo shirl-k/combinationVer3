@@ -49,9 +49,9 @@ public class Member {
 
     @Embedded
     private HomeAddress homeAddress;
-
-    @Embedded
-    private DelivAddress delivAddress; // 배송지 주소
+//
+//    @Embedded
+//    private DeliveryAddress deliveryAddress; // 배송지 주소
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "social_account_id")
