@@ -3,18 +3,21 @@ package com.example.combination.dto;
 import com.example.combination.domain.valuetype.HomeAddress;
 import com.example.combination.domain.valuetype.MovingServiceAddress;
 
+import jakarta.persistence.Column;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class MovingServiceFormDTO {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class MovingServiceDTO {
 
-    private final HomeAddress homeAddress;
+    private HomeAddress homeAddress;
 
-    private final MovingServiceAddress movingServiceAddress;
+    private MovingServiceAddress movingServiceAddress;
 
-    private final String movingServiceDescription;
+    private String movingServiceDescription;
 }

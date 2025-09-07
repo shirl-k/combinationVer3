@@ -1,39 +1,37 @@
 package com.example.combination.domain.movingService;
 
-import com.example.combination.domain.delivery.DeliveryStatus;
 import com.example.combination.domain.order.Order;
 import com.example.combination.domain.valuetype.HomeAddress;
 import com.example.combination.domain.valuetype.MovingServiceAddress;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "moving_service_form")
-public class MovingServiceForm {
+@Table(name = "moving_service")
+public class MovingService {
 
-    @Id
-    @GeneratedValue
-    private Long id;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long Id;
 
-    private String name;
+    @Column(length = 500)
+    private String movingServiceDescription;
 
-    private String phoneNum;
+    private String name; //회원 이름
+
+    private String phoneNum; //회원 전화번호
 
     @Embedded
-    private HomeAddress homeAddress;
+    private HomeAddress homeAddress; //기존 집 주소
 
     @Embedded
-    private MovingServiceAddress movingServiceAddress;
-
+    private MovingServiceAddress movingServiceAddress; //새 주소 (배송지)
 
     //이사 서비스
     @Enumerated(EnumType.STRING)
@@ -55,11 +53,15 @@ public class MovingServiceForm {
 
     private LocalDateTime newHome;
 
-    @OneToOne(mappedBy = "movingServiceForm", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "movingService", fetch = FetchType.LAZY)
     private Order order;
 
-    @Column(length = 500)
-    private String movingServiceDescription;
+    public void setOrder(Order order) {
+        this.order = order;
+        if (order.getMovingService() != null) {
+            order.setMovingService(this);
+        }
+    }
 
     public void changeMovingServiceStatus(MovingServiceStatus newStatus) {
         switch (newStatus) {
@@ -81,6 +83,7 @@ public class MovingServiceForm {
                 this.newHome = LocalDateTime.now();
         }
     }
+
+    public int calculateMovingServicePrice() {
+    }
 }
-
-

@@ -1,6 +1,7 @@
 package com.example.combination.domain.order;
 
 
+import com.example.combination.domain.delivery.ServiceType;
 import com.example.combination.domain.member.Member;
 
 import com.example.combination.domain.member.MembershipGrade;
@@ -38,7 +39,9 @@ public class ShoppingCart { //실시간 계산 로직
     @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> cartItems = new ArrayList<>();
 
-    private boolean movingService;
+    @Enumerated(EnumType.STRING)
+    private ServiceType serviceType;   //서비스 옵션 선택 (배송만 서비스/ 이사서비스)
+
     private int movingServicePrice;
 
 //===========핵심 비즈니스 로직============//ss
@@ -65,7 +68,7 @@ public class ShoppingCart { //실시간 계산 로직
     public void removeItemBySkuId(String skuId) {
         CartItem target = cartItems.stream().filter(cartItem -> cartItem.getSku().getSkuId().equals(skuId))
                 .findFirst()
-                .orElseThrow(()-> new SKUNotFoundException("해당 SKU 없음: " + skuId));
+                .orElseThrow(() -> new SKUNotFoundException("해당 SKU 없음: " + skuId));
         removeItemFromCart(target);
     }
 
@@ -73,14 +76,16 @@ public class ShoppingCart { //실시간 계산 로직
         return cartItems.stream().filter(cartItem -> cartItem.getSku().getSkuId().equals(skuId))
                 .findFirst();
     }
+
     public void increaseQuantity(String skuId, int amount) {
         CartItem item = findItemBySkuId(skuId)
-                .orElseThrow(()->new SKUNotFoundException("장바구니에 해당 SKU가 없음.: " + skuId));
+                .orElseThrow(() -> new SKUNotFoundException("장바구니에 해당 SKU가 없음.: " + skuId));
         item.setQuantity(item.getQuantity() + amount);
     }
+
     public void decreaseQuantity(String skuId, int amount) {
         CartItem item = findItemBySkuId(skuId)
-                .orElseThrow(()->new SKUNotFoundException("장바구니에 해당 SKU가 없음.: " + skuId));
+                .orElseThrow(() -> new SKUNotFoundException("장바구니에 해당 SKU가 없음.: " + skuId));
         item.setQuantity(item.getQuantity() - amount);
         //수량 <=0 이면 카트 자동 삭제
         if (item.getQuantity() <= 0) {
@@ -88,24 +93,22 @@ public class ShoppingCart { //실시간 계산 로직
         }
     }
     //장바구니 총합 금액 (예상 지불 금액)
-        public int calculateTotalPrice() {
-        if (!movingService) {
-            return cartItems.stream()
+    public int calculateTotalPrice() {
+        int itemsTotal = cartItems.stream()
                     .filter(CartItem::isSelected)
                     .mapToInt(CartItem::getTotalPrice) // unitPrice * quantity
-                    .sum()-memberDiscount;
-        } else {
-            return cartItems.stream()
-                    .filter(CartItem::isSelected)
-                    .mapToInt(CartItem::getTotalPrice) // unitPrice * quantity
-                    .sum()-memberDiscount + movingServicePrice;
+                    .sum();
+        if(serviceType == null) {
+            throw new IllegalStateException("배송 옵션을 선택해주세요.");
         }
+        return switch (serviceType) {
+            case JUST_DELIVERY -> itemsTotal - memberDiscount;
+            case MOVING_SERVICE -> itemsTotal - memberDiscount + movingServicePrice;
+        };
     }
-
-    //서비스 옵션 선택
-
-
 }
+
+
     //개별 상품 수량 증가
 //    public void increaseQuantity(CartItem cartItem, int quantity) {
 //        cartItem.setQuantity(cartItem.getQuantity() + quantity);

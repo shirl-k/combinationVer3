@@ -1,13 +1,23 @@
 package com.example.combination.domain.delivery;
 
+import com.example.combination.domain.order.Order;
 import com.example.combination.domain.valuetype.DeliveryAddress;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@DiscriminatorValue("justOrder")
-public class JustDelivery extends ServiceDetail{
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Table(name = "just_delivery")
+public class JustDelivery {
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long Id;
 
     private String name; //회원 이름
 
@@ -17,7 +27,7 @@ public class JustDelivery extends ServiceDetail{
     private DeliveryAddress deliveryAddress;
 
     @Enumerated(EnumType.STRING)
-    private DeliveryStatus deliveryStatus; //READY(배송 준비 중: 상품 패킹),SHIPPED(출고됨(운송장 번호 생성)),IN_TRANSIT(배송 중),DELIVERED(배송 완료),RETURNED(반송됨)
+    private JustDeliveryStatus justDeliveryStatus; //READY(배송 준비 중: 상품 패킹),SHIPPED(출고됨(운송장 번호 생성)),IN_TRANSIT(배송 중),DELIVERED(배송 완료),RETURNED(반송됨)
 
     private LocalDateTime deliveryTimeReady;
 
@@ -27,5 +37,27 @@ public class JustDelivery extends ServiceDetail{
 
     private LocalDateTime deliveryTimeDelivered;
 
+    @OneToOne(mappedBy = "justDelivery", fetch = FetchType.LAZY)
+    private Order order;
 
+    @Column(length = 500)
+    private String deliveryDescription;
+
+    public void changeJustDeliveryStatus(JustDeliveryStatus newStatus) {
+        this.justDeliveryStatus = newStatus;
+        switch (newStatus) {
+            case READY -> this.deliveryTimeReady = LocalDateTime.now();
+            case SHIPPED -> this.deliveryTimeShipped = LocalDateTime.now();
+            case IN_TRANSIT -> this.deliveryTimeInTransit = LocalDateTime.now();
+            case DELIVERED -> this.deliveryTimeDelivered = LocalDateTime.now();
+        }
+    }
+
+    //연관관계 편의 메서드  : Order <-> DeliveryAddressForm 동기화
+    public void setOrder(Order order) {
+        this.order = order;
+        if (order.getJustDelivery() != null) {
+            order.setJustDelivery(this);
+        }
+    }
 }

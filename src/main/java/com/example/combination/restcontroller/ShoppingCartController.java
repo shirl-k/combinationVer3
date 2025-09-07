@@ -1,7 +1,6 @@
 package com.example.combination.restcontroller;
 
 
-import com.example.combination.domain.order.CartItem;
 import com.example.combination.dto.CartItemDTO;
 import com.example.combination.dto.CartItemRequestDTO;
 import com.example.combination.service.ShoppingCartService;

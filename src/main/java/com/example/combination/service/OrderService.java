@@ -1,6 +1,8 @@
 package com.example.combination.service;
 
-import com.example.combination.domain.delivery.DeliveryForm;
+import com.example.combination.domain.business.price.JustDeliveryPricePolicy;
+import com.example.combination.domain.business.price.MovingServicePricePolicy;
+import com.example.combination.domain.delivery.ServiceType;
 import com.example.combination.domain.member.Member;
 import com.example.combination.domain.order.Order;
 import com.example.combination.domain.order.OrderItem;
@@ -13,16 +15,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-@Transactional
+    @Transactional
     @Service
     @RequiredArgsConstructor
     public class OrderService {
 
         private final OrderRepository orderRepository;
         private final MemberRepository memberRepository;
+        private final JustDeliveryPricePolicy justDeliveryPricePolicy;
+        private final MovingServicePricePolicy movingServicePricePolicy;
 
             //주문 수정 : 변경감지
             public void updateOrderStatus(Long orderId, OrderStatus newStatus) {
@@ -31,18 +34,25 @@ import java.util.List;
 
             order.changeOrderStatus(newStatus);  //변경 감지 (JPA가 영속 상태 엔티티 조회로 감시해서 커밋시점에 변경된 데이터 업데이트)
             }
+            public int calculateFinalPrice(Order order) {
+                if(order.getServiceType() == ServiceType.JUST_DELIVERY) {
+                    return justDeliveryPricePolicy.calculatePrice(order);
+                }else if(order.getServiceType() == ServiceType.MOVING_SERVICE) {
+                    return movingServicePricePolicy.calculatePrice(order);
+                }else throw new IllegalStateException("배송 서비스 정보를 찾을 수 없습니다.");
+            }
 
             //주문 생성 : CREATED OrderService: (흐름/연동)
 
-            public Order createOrder(Member member, List<OrderItem> orderItems, PaymentMethod paymentMethod
-                    , DeliveryForm deliveryForm, OrderStatus orderStatus, boolean usePoints, LocalDateTime createOrderDate, int usedPoints) {
-                Order order = Order.createFinalOrder(member, orderItems,paymentMethod, deliveryForm,orderStatus,usePoints,usedPoints);
-
-                order.calculateFinalPrice(member); //최종 금액 계산(포인트 반영)
-                orderRepository.save(order);
-                return order;
-            }
-
+//            public Order createOrder(Member member, List<OrderItem> orderItems, PaymentMethod paymentMethod
+//                    , //DeliveryForm deliveryForm, OrderStatus orderStatus, boolean usePoints, LocalDateTime createOrderDate, int usedPoints) {
+//                Order order = Order.createFinalOrder(member, orderItems,paymentMethod, deliveryForm,orderStatus,usePoints,usedPoints);
+//
+//                order.calculateFinalPrice(member); //최종 금액 계산(포인트 반영)
+//                orderRepository.save(order);
+//                return order;
+//            }
+//
 
              //주문 승인 : CONFIRMED
             public void confirmOrder(Long orderId) {
