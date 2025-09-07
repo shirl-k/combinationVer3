@@ -53,7 +53,8 @@ public class MovingService {
 
     private LocalDateTime newHome;
 
-    @OneToOne(mappedBy = "movingService", fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", unique = true)
     private Order order;
 
     public void setOrder(Order order) {

@@ -22,12 +22,12 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Entity
-@Table(name = "orders")
+@Table(name = "order")
 public class Order {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "orders_id")
+        @Column(name = "order_id")
         private Long orderId;
 
         @ManyToOne(fetch = FetchType.LAZY)
@@ -171,18 +171,24 @@ public class Order {
 
         //총 결제 금액
         public int calculateLineTotalPrice() {
-            if (movingService == false) {
-                return orderItems.stream()
-                        .filter(OrderItem::isSelected)
-                        .mapToInt(OrderItem::getLineTotal) // unitPrice * quantity
-                        .sum();
-            } else {
-                return orderItems.stream()
-                        .filter(OrderItem::isSelected)
-                        .mapToInt(OrderItem::getLineTotal) // unitPrice * quantity
-                        .sum() + movingServicePrice ;
-            }
+            return orderItems.stream()
+                    .filter(OrderItem::isSelected)
+                    .mapToInt(OrderItem::getLineTotal) //unitPrice * quantity
+                    .sum();
         }
+//        public int calculateLineTotalPrice() {
+//            if (movingService == false) {
+//                return orderItems.stream()
+//                        .filter(OrderItem::isSelected)
+//                        .mapToInt(OrderItem::getLineTotal) // unitPrice * quantity
+//                        .sum();
+//            } else {
+//                return orderItems.stream()
+//                        .filter(OrderItem::isSelected)
+//                        .mapToInt(OrderItem::getLineTotal) // unitPrice * quantity
+//                        .sum() + movingServicePrice ;
+//            }
+//        }
 
 
         //포인트 사용 여부 - 포인트 차감된 결제 금액

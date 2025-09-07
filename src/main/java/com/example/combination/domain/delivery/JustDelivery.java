@@ -37,7 +37,8 @@ public class JustDelivery {
 
     private LocalDateTime deliveryTimeDelivered;
 
-    @OneToOne(mappedBy = "justDelivery", fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
     private Order order;
 
     @Column(length = 500)

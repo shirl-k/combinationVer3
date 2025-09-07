@@ -34,6 +34,7 @@ import java.util.List;
 
             order.changeOrderStatus(newStatus);  //변경 감지 (JPA가 영속 상태 엔티티 조회로 감시해서 커밋시점에 변경된 데이터 업데이트)
             }
+
             public int calculateFinalPrice(Order order) {
                 if(order.getServiceType() == ServiceType.JUST_DELIVERY) {
                     return justDeliveryPricePolicy.calculatePrice(order);
@@ -45,7 +46,7 @@ import java.util.List;
             //주문 생성 : CREATED OrderService: (흐름/연동)
 
 //            public Order createOrder(Member member, List<OrderItem> orderItems, PaymentMethod paymentMethod
-//                    , //DeliveryForm deliveryForm, OrderStatus orderStatus, boolean usePoints, LocalDateTime createOrderDate, int usedPoints) {
+//                    , //JustDelivery justDelivery, MovingService movingService, OrderStatus orderStatus, boolean usePoints, LocalDateTime createOrderDate, int usedPoints) {
 //                Order order = Order.createFinalOrder(member, orderItems,paymentMethod, deliveryForm,orderStatus,usePoints,usedPoints);
 //
 //                order.calculateFinalPrice(member); //최종 금액 계산(포인트 반영)
