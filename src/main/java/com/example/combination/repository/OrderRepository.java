@@ -20,6 +20,14 @@ public class OrderRepository {
         em.persist(order);
     }
 
+    /**
+     * 주문을 영속성 컨텍스트에 추가 (변경감지용)
+     * merge가 아닌 persist만 사용하여 dirty checking 활용
+     */
+    public void persistOrder(Order order) {
+        em.persist(order);
+    }
+
     public void delete(Order order) {
         em.remove(order);
     }

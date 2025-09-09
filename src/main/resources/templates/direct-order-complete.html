@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>결제 완료 - Combination</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .success-icon {
+            font-size: 4em;
+            color: #27ae60;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 2.2em;
+            font-weight: 300;
+        }
+        .order-info {
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border: 2px solid #e9ecef;
+        }
+        .order-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding: 10px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .order-detail:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #2c3e50;
+        }
+        .order-detail-label {
+            color: #7f8c8d;
+        }
+        .order-detail-value {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        .btn-success {
+            background-color: #27ae60;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #229954;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+        .message {
+            color: #7f8c8d;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-icon">✅</div>
+        <h1>결제가 완료되었습니다!</h1>
+        <p class="message">주문이 성공적으로 처리되었습니다. 감사합니다.</p>
+        
+        <div class="order-info">
+            <div class="order-detail">
+                <span class="order-detail-label">주문 번호</span>
+                <span class="order-detail-value" id="orderId">#12345</span>
+            </div>
+            <div class="order-detail">
+                <span class="order-detail-label">주문 일시</span>
+                <span class="order-detail-value" id="orderDate">2024-01-15 14:30:25</span>
+            </div>
+            <div class="order-detail">
+                <span class="order-detail-label">결제 방식</span>
+                <span class="order-detail-value" id="paymentMethod">카드 결제</span>
+            </div>
+            <div class="order-detail">
+                <span class="order-detail-label">서비스 타입</span>
+                <span class="order-detail-value" id="serviceType">일반 배송</span>
+            </div>
+            <div class="order-detail">
+                <span class="order-detail-label">총 결제 금액</span>
+                <span class="order-detail-value" id="totalAmount">150,000원</span>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="/" class="btn btn-primary">홈으로 가기</a>
+            <a href="/cart" class="btn btn-secondary">장바구니 보기</a>
+            <button class="btn btn-success" onclick="printOrder()">주문서 출력</button>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const orderId = /*[[${orderId}]]*/ 12345;
+        
+        // 페이지 로드 시 주문 정보 표시
+        document.addEventListener('DOMContentLoaded', function() {
+            displayOrderInfo();
+        });
+
+        // 주문 정보 표시
+        function displayOrderInfo() {
+            document.getElementById('orderId').textContent = `#${orderId}`;
+            document.getElementById('orderDate').textContent = new Date().toLocaleString('ko-KR');
+            
+            // 실제 구현에서는 서버에서 주문 정보를 가져와야 함
+            // 임시 데이터
+            document.getElementById('paymentMethod').textContent = '카드 결제';
+            document.getElementById('serviceType').textContent = '일반 배송';
+            document.getElementById('totalAmount').textContent = '150,000원';
+        }
+
+        // 주문서 출력
+        function printOrder() {
+            window.print();
+        }
+    </script>
+</body>
+</html>

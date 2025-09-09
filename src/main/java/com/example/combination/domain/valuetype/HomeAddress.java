@@ -7,6 +7,7 @@ import lombok.*;
 
 @Embeddable
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class HomeAddress {

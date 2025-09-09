@@ -33,6 +33,8 @@ public class Order {
         @Enumerated(EnumType.STRING)
         private ServiceType serviceType;
 
+        @Enumerated(EnumType.STRING)
+        private com.example.combination.domain.payment.PaymentMethod paymentMethod;
 
         @Enumerated(EnumType.STRING)
         private OrderStatus orderStatus; //주문 자체 흐름. 주문의 큰 그림만 관리 (결제가 실패했다고 해서 Order를 바로 실패로 두진 않음. 아직 살아있을 수 있음.)

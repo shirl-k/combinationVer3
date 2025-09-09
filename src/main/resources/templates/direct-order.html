@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>바로 결제 - Combination</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            font-weight: 300;
+        }
+        .product-info {
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 2px solid #e9ecef;
+        }
+        .product-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .product-price {
+            font-size: 1.3em;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .form-section {
+            margin-bottom: 30px;
+        }
+        .form-section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        .service-options {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .service-option {
+            flex: 1;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .service-option:hover {
+            border-color: #3498db;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+        }
+        .service-option.selected {
+            border-color: #27ae60;
+            background-color: #d5f4e6;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+        .service-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+        .service-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        .service-description {
+            color: #7f8c8d;
+            font-size: 0.95em;
+            margin-bottom: 10px;
+        }
+        .service-price {
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .payment-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .payment-option {
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .payment-option:hover {
+            border-color: #3498db;
+        }
+        .payment-option.selected {
+            border-color: #27ae60;
+            background-color: #d5f4e6;
+        }
+        .payment-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+        .total-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .total-title {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+        .total-amount {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .total-details {
+            font-size: 1em;
+            opacity: 0.8;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        .btn-success {
+            background-color: #27ae60;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #229954;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+        .btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .alert-warning {
+            background-color: #fff3cd;
+            border-color: #ffeaa7;
+            color: #856404;
+        }
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #bdc3c7;
+            background-color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            transition: all 0.2s;
+        }
+        .quantity-btn:hover {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        .quantity-display {
+            font-weight: bold;
+            min-width: 50px;
+            text-align: center;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ 바로 결제</h1>
+        
+        <!-- 알림 메시지 -->
+        <div id="alertContainer" style="display: none;">
+            <div id="alertMessage" class="alert"></div>
+        </div>
+        
+        <!-- 로딩 상태 -->
+        <div id="loading" class="loading">
+            <p>🔄 결제를 처리하는 중...</p>
+        </div>
+        
+        <!-- 상품 정보 -->
+        <div class="product-info">
+            <div class="product-name" id="productName">상품 정보를 불러오는 중...</div>
+            <div class="product-price" id="productPrice">0원</div>
+        </div>
+        
+        <!-- 수량 선택 -->
+        <div class="form-section">
+            <h3>📦 수량 선택</h3>
+            <div class="quantity-controls">
+                <button class="quantity-btn" onclick="changeQuantity(-1)">-</button>
+                <span class="quantity-display" id="quantityDisplay">1</span>
+                <button class="quantity-btn" onclick="changeQuantity(1)">+</button>
+            </div>
+        </div>
+        
+        <!-- 서비스 선택 -->
+        <div class="form-section">
+            <h3>🚚 배송 서비스 선택</h3>
+            <div class="service-options">
+                <label class="service-option" for="justDelivery">
+                    <input type="radio" id="justDelivery" name="serviceType" value="JUST_DELIVERY" onchange="updateServiceType()">
+                    <div class="service-title">🚚 일반 배송</div>
+                    <div class="service-description">상품만 배송받고 싶으신가요?</div>
+                    <div class="service-price">추가 비용 없음</div>
+                </label>
+                <label class="service-option" for="movingService">
+                    <input type="radio" id="movingService" name="serviceType" value="MOVING_SERVICE" onchange="updateServiceType()">
+                    <div class="service-title">🏠 이사 서비스</div>
+                    <div class="service-description">가구 설치 및 배치까지 도움받으세요!</div>
+                    <div class="service-price">+500,000원</div>
+                </label>
+            </div>
+        </div>
+        
+        <!-- 배송 정보 -->
+        <div class="form-section" id="deliveryInfo" style="display: none;">
+            <h3>📍 배송 정보</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="customerName">받는 분 이름 *</label>
+                    <input type="text" id="customerName" name="customerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="customerPhone">연락처 *</label>
+                    <input type="tel" id="customerPhone" name="customerPhone" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="customerEmail">이메일</label>
+                <input type="email" id="customerEmail" name="customerEmail">
+            </div>
+            <div class="form-group">
+                <label for="deliveryAddress">배송 주소 *</label>
+                <input type="text" id="deliveryAddress" name="deliveryAddress" required>
+            </div>
+        </div>
+        
+        <!-- 이사 서비스 정보 -->
+        <div class="form-section" id="movingInfo" style="display: none;">
+            <h3>🏠 이사 서비스 정보</h3>
+            <div class="form-group">
+                <label for="homeAddress">현재 주소 *</label>
+                <input type="text" id="homeAddress" name="homeAddress">
+            </div>
+            <div class="form-group">
+                <label for="movingDate">이사 예정일</label>
+                <input type="date" id="movingDate" name="movingDate">
+            </div>
+            <div class="form-group">
+                <label for="movingDescription">이사 서비스 요청사항</label>
+                <textarea id="movingDescription" name="movingDescription" rows="3" placeholder="특별한 요청사항이 있으시면 입력해주세요."></textarea>
+            </div>
+        </div>
+        
+        <!-- 결제 방식 선택 -->
+        <div class="form-section">
+            <h3>💳 결제 방식 선택</h3>
+            <div class="payment-options">
+                <label class="payment-option" for="cardPayment">
+                    <input type="radio" id="cardPayment" name="paymentMethod" value="CARD" onchange="updatePaymentMethod()">
+                    <div>💳 카드 결제</div>
+                </label>
+                <label class="payment-option" for="bankTransfer">
+                    <input type="radio" id="bankTransfer" name="paymentMethod" value="BANK_TRANSFER" onchange="updatePaymentMethod()">
+                    <div>🏦 무통장입금</div>
+                </label>
+                <label class="payment-option" for="pointPayment">
+                    <input type="radio" id="pointPayment" name="paymentMethod" value="POINT" onchange="updatePaymentMethod()">
+                    <div>⭐ 포인트 결제</div>
+                </label>
+            </div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="usePoints" name="usePoints" onchange="updateTotalAmount()">
+                <label for="usePoints">포인트 사용 (보유 포인트: 5,000원)</label>
+            </div>
+        </div>
+        
+        <!-- 총 금액 -->
+        <div class="total-section">
+            <div class="total-title">총 결제 금액</div>
+            <div class="total-amount" id="totalAmount">0원</div>
+            <div class="total-details" id="totalDetails">서비스를 선택해주세요</div>
+        </div>
+        
+        <!-- 액션 버튼들 -->
+        <div class="action-buttons">
+            <button class="btn btn-secondary" onclick="goBack()">뒤로가기</button>
+            <button class="btn btn-success" id="payBtn" onclick="processPayment()" disabled>
+                💳 바로 결제하기
+            </button>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const skuId = /*[[${skuId}]]*/ 'test-sku-001';
+        let productInfo = null;
+        let currentQuantity = 1;
+        let currentServiceType = null;
+        let currentPaymentMethod = null;
+        
+        // 페이지 로드 시 상품 정보 로드
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProductInfo();
+        });
+
+        // 상품 정보 로드
+        async function loadProductInfo() {
+            try {
+                const response = await fetch(`/api/direct-order/info/${skuId}`);
+                const result = await response.json();
+                
+                if (result.data) {
+                    productInfo = result.data;
+                    displayProductInfo(productInfo);
+                }
+            } catch (error) {
+                console.error('상품 정보 로드 실패:', error);
+                showAlert('상품 정보를 불러오는 중 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        // 상품 정보 표시
+        function displayProductInfo(info) {
+            document.getElementById('productName').textContent = info.itemName || '테스트 상품';
+            document.getElementById('productPrice').textContent = (info.unitPrice || 0).toLocaleString() + '원';
+            updateTotalAmount();
+        }
+
+        // 수량 변경
+        function changeQuantity(change) {
+            const newQuantity = currentQuantity + change;
+            if (newQuantity >= 1) {
+                currentQuantity = newQuantity;
+                document.getElementById('quantityDisplay').textContent = currentQuantity;
+                updateTotalAmount();
+            }
+        }
+
+        // 서비스 타입 업데이트
+        function updateServiceType() {
+            const selectedService = document.querySelector('input[name="serviceType"]:checked');
+            if (selectedService) {
+                currentServiceType = selectedService.value;
+                
+                // 선택된 옵션 스타일 업데이트
+                document.querySelectorAll('.service-option').forEach(option => {
+                    option.classList.remove('selected');
+                });
+                selectedService.closest('.service-option').classList.add('selected');
+                
+                // 배송 정보 표시/숨김
+                const deliveryInfo = document.getElementById('deliveryInfo');
+                const movingInfo = document.getElementById('movingInfo');
+                
+                if (currentServiceType === 'JUST_DELIVERY') {
+                    deliveryInfo.style.display = 'block';
+                    movingInfo.style.display = 'none';
+                } else if (currentServiceType === 'MOVING_SERVICE') {
+                    deliveryInfo.style.display = 'block';
+                    movingInfo.style.display = 'block';
+                } else {
+                    deliveryInfo.style.display = 'none';
+                    movingInfo.style.display = 'none';
+                }
+                
+                updateTotalAmount();
+            }
+        }
+
+        // 결제 방식 업데이트
+        function updatePaymentMethod() {
+            const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
+            if (selectedPayment) {
+                currentPaymentMethod = selectedPayment.value;
+                
+                // 선택된 옵션 스타일 업데이트
+                document.querySelectorAll('.payment-option').forEach(option => {
+                    option.classList.remove('selected');
+                });
+                selectedPayment.closest('.payment-option').classList.add('selected');
+                
+                updateTotalAmount();
+            }
+        }
+
+        // 총 금액 업데이트
+        function updateTotalAmount() {
+            if (!productInfo) return;
+            
+            const basePrice = (productInfo.unitPrice || 0) * currentQuantity;
+            let servicePrice = 0;
+            let details = '';
+            
+            if (currentServiceType === 'MOVING_SERVICE') {
+                servicePrice = 500000; // 이사 서비스 비용
+                details = '이사 서비스 포함 (+500,000원)';
+            } else if (currentServiceType === 'JUST_DELIVERY') {
+                details = '일반 배송 서비스';
+            } else {
+                details = '서비스를 선택해주세요';
+            }
+            
+            let totalPrice = basePrice + servicePrice;
+            
+            // 포인트 사용 시
+            const usePoints = document.getElementById('usePoints').checked;
+            if (usePoints) {
+                const availablePoints = 5000; // 실제로는 서버에서 가져와야 함
+                totalPrice = Math.max(0, totalPrice - availablePoints);
+                details += usePoints ? ' (포인트 5,000원 사용)' : '';
+            }
+            
+            document.getElementById('totalAmount').textContent = totalPrice.toLocaleString() + '원';
+            document.getElementById('totalDetails').textContent = details;
+            
+            // 결제 버튼 활성화/비활성화
+            const payBtn = document.getElementById('payBtn');
+            const canPay = currentServiceType && currentPaymentMethod && totalPrice > 0;
+            payBtn.disabled = !canPay;
+        }
+
+        // 결제 처리
+        async function processPayment() {
+            if (!validateForm()) {
+                return;
+            }
+            
+            try {
+                showLoading(true);
+                
+                const orderData = {
+                    spuId: 1, // 실제로는 상품 정보에서 가져와야 함
+                    itemName: productInfo.itemName,
+                    skuId: skuId,
+                    quantity: currentQuantity,
+                    unitPrice: productInfo.unitPrice,
+                    serviceType: currentServiceType,
+                    paymentMethod: currentPaymentMethod,
+                    usePoints: document.getElementById('usePoints').checked,
+                    customerName: document.getElementById('customerName').value,
+                    customerPhone: document.getElementById('customerPhone').value,
+                    customerEmail: document.getElementById('customerEmail').value,
+                    deliveryAddress: document.getElementById('deliveryAddress').value,
+                    homeAddress: document.getElementById('homeAddress').value,
+                    movingDate: document.getElementById('movingDate').value,
+                    movingDescription: document.getElementById('movingDescription').value
+                };
+                
+                const response = await fetch('/api/direct-order/process', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(orderData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.data.success) {
+                    if (result.data.redirectUrl) {
+                        // PG사 결제 페이지로 리다이렉트
+                        window.location.href = result.data.redirectUrl;
+                    } else {
+                        // 결제 완료 페이지로 이동
+                        window.location.href = `/direct-order/complete/${result.data.orderId}`;
+                    }
+                } else {
+                    showAlert(result.message || '결제 처리에 실패했습니다.', 'error');
+                }
+            } catch (error) {
+                console.error('결제 처리 실패:', error);
+                showAlert('결제 처리 중 오류가 발생했습니다.', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // 폼 유효성 검사
+        function validateForm() {
+            if (!currentServiceType) {
+                showAlert('배송 서비스를 선택해주세요.', 'warning');
+                return false;
+            }
+            
+            if (!currentPaymentMethod) {
+                showAlert('결제 방식을 선택해주세요.', 'warning');
+                return false;
+            }
+            
+            const requiredFields = ['customerName', 'customerPhone', 'deliveryAddress'];
+            for (const fieldId of requiredFields) {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    showAlert(`${field.previousElementSibling.textContent}을(를) 입력해주세요.`, 'warning');
+                    field.focus();
+                    return false;
+                }
+            }
+            
+            if (currentServiceType === 'MOVING_SERVICE') {
+                const homeAddress = document.getElementById('homeAddress');
+                if (!homeAddress.value.trim()) {
+                    showAlert('현재 주소를 입력해주세요.', 'warning');
+                    homeAddress.focus();
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        // 뒤로가기
+        function goBack() {
+            window.history.back();
+        }
+
+        // UI 유틸리티 함수들
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertMessage = document.getElementById('alertMessage');
+            
+            alertMessage.textContent = message;
+            alertMessage.className = `alert alert-${type}`;
+            alertContainer.style.display = 'block';
+            
+            // 3초 후 자동 숨김
+            setTimeout(() => {
+                alertContainer.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
