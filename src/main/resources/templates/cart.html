@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>장바구니 - Combination</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+        .cart-info {
+            font-size: 1.1em;
+            color: #7f8c8d;
+        }
+        .cart-items {
+            margin-bottom: 30px;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border: 1px solid #ecf0f1;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            background-color: #fdfdfd;
+            transition: all 0.3s ease;
+        }
+        .cart-item:hover {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .item-info {
+            flex: 1;
+        }
+        .item-name {
+            font-weight: 600;
+            font-size: 1.2em;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .item-price {
+            color: #e74c3c;
+            font-weight: 500;
+        }
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 20px;
+        }
+        .quantity-btn {
+            width: 35px;
+            height: 35px;
+            border: 1px solid #bdc3c7;
+            background-color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .quantity-btn:hover {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        .quantity-display {
+            font-weight: bold;
+            min-width: 30px;
+            text-align: center;
+        }
+        .remove-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .remove-btn:hover {
+            background-color: #c0392b;
+        }
+        .service-selection {
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 2px solid #e9ecef;
+        }
+        .service-selection h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+        .service-options {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .service-option {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .service-option:hover {
+            border-color: #3498db;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+        }
+        .service-option.selected {
+            border-color: #27ae60;
+            background-color: #d5f4e6;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+        .service-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+        .service-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        .service-description {
+            color: #7f8c8d;
+            font-size: 0.95em;
+            margin-bottom: 10px;
+        }
+        .service-price {
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .total-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .total-title {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+        .total-amount {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .total-details {
+            font-size: 1em;
+            opacity: 0.8;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        .btn-success {
+            background-color: #27ae60;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #229954;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+        }
+        .empty-cart {
+            text-align: center;
+            padding: 60px 20px;
+            color: #95a5a6;
+        }
+        .empty-cart-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .alert-warning {
+            background-color: #fff3cd;
+            border-color: #ffeaa7;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛒 장바구니</h1>
+        
+        <!-- 알림 메시지 -->
+        <div id="alertContainer" style="display: none;">
+            <div id="alertMessage" class="alert"></div>
+        </div>
+        
+        <!-- 장바구니 헤더 -->
+        <div class="cart-header">
+            <div class="cart-info">
+                <span id="cartName">장바구니</span> 
+                <span id="itemCount">(0개 상품)</span>
+            </div>
+            <button class="btn btn-secondary" onclick="refreshCart()">새로고침</button>
+        </div>
+
+        <!-- 로딩 상태 -->
+        <div id="loading" class="loading">
+            <p>🔄 장바구니를 불러오는 중...</p>
+        </div>
+
+        <!-- 빈 장바구니 -->
+        <div id="emptyCart" class="empty-cart" style="display: none;">
+            <div class="empty-cart-icon">🛒</div>
+            <h3>장바구니가 비어있습니다</h3>
+            <p>상품을 추가해보세요!</p>
+            <a href="/" class="btn btn-primary">쇼핑 계속하기</a>
+        </div>
+
+        <!-- 장바구니 상품 목록 -->
+        <div id="cartItems" class="cart-items" style="display: none;">
+            <!-- 동적으로 상품 목록이 추가됩니다 -->
+        </div>
+
+        <!-- 서비스 선택 -->
+        <div id="serviceSelection" class="service-selection" style="display: none;">
+            <h3>📦 배송 서비스 선택</h3>
+            <div class="service-options">
+                <label class="service-option" for="justDelivery">
+                    <input type="radio" id="justDelivery" name="serviceType" value="JUST_DELIVERY" onchange="updateServiceType()">
+                    <div class="service-title">🚚 일반 배송</div>
+                    <div class="service-description">상품만 배송받고 싶으신가요?</div>
+                    <div class="service-price">추가 비용 없음</div>
+                </label>
+                <label class="service-option" for="movingService">
+                    <input type="radio" id="movingService" name="serviceType" value="MOVING_SERVICE" onchange="updateServiceType()">
+                    <div class="service-title">🏠 이사 서비스</div>
+                    <div class="service-description">가구 설치 및 배치까지 도움받으세요!</div>
+                    <div class="service-price">+500,000원</div>
+                </label>
+            </div>
+        </div>
+
+        <!-- 총 금액 -->
+        <div id="totalSection" class="total-section" style="display: none;">
+            <div class="total-title">총 결제 금액</div>
+            <div class="total-amount" id="totalAmount">0원</div>
+            <div class="total-details" id="totalDetails">서비스를 선택해주세요</div>
+        </div>
+
+        <!-- 액션 버튼들 -->
+        <div id="actionButtons" class="action-buttons" style="display: none;">
+            <button class="btn btn-secondary" onclick="continueShopping()">쇼핑 계속하기</button>
+            <button class="btn btn-success" id="checkoutBtn" onclick="proceedToCheckout()" disabled>
+                결제하기
+            </button>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const cartId = /*[[${cartId}]]*/ 1;
+        let currentCart = null;
+        
+        // 페이지 로드 시 장바구니 데이터 로드
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCartData();
+        });
+
+        // 장바구니 데이터 로드
+        async function loadCartData() {
+            try {
+                showLoading(true);
+                
+                const response = await fetch(`/api/cart/${cartId}`);
+                const result = await response.json();
+                
+                if (result.data) {
+                    currentCart = result.data;
+                    displayCart(result.data);
+                } else {
+                    showEmptyCart();
+                }
+            } catch (error) {
+                console.error('장바구니 로드 실패:', error);
+                showAlert('장바구니를 불러오는 중 오류가 발생했습니다.', 'error');
+                showEmptyCart();
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // 장바구니 표시
+        function displayCart(cartData) {
+            if (!cartData.items || cartData.items.length === 0) {
+                showEmptyCart();
+                return;
+            }
+
+            // 장바구니 정보 업데이트
+            document.getElementById('cartName').textContent = cartData.cartName || '장바구니';
+            document.getElementById('itemCount').textContent = `(${cartData.itemCount}개 상품)`;
+
+            // 상품 목록 표시
+            displayCartItems(cartData.items);
+            
+            // 서비스 선택 표시
+            displayServiceSelection(cartData.serviceType);
+            
+            // 총 금액 업데이트
+            updateTotalAmount();
+            
+            // UI 요소들 표시
+            showCartContent(true);
+        }
+
+        // 상품 목록 표시
+        function displayCartItems(items) {
+            const cartItemsContainer = document.getElementById('cartItems');
+            cartItemsContainer.innerHTML = '';
+
+            items.forEach(item => {
+                const itemElement = createCartItemElement(item);
+                cartItemsContainer.appendChild(itemElement);
+            });
+        }
+
+        // 상품 요소 생성
+        function createCartItemElement(item) {
+            const div = document.createElement('div');
+            div.className = 'cart-item';
+            div.innerHTML = `
+                <div class="item-info">
+                    <div class="item-name">${item.skuName || 'Unknown Item'}</div>
+                    <div class="item-price">단가: ${(item.unitPrice || 0).toLocaleString()}원</div>
+                </div>
+                <div class="quantity-controls">
+                    <button class="quantity-btn" onclick="changeQuantity('${item.skuId}', -1)">-</button>
+                    <span class="quantity-display">${item.quantity || 0}</span>
+                    <button class="quantity-btn" onclick="changeQuantity('${item.skuId}', 1)">+</button>
+                </div>
+                <div class="item-total">${(item.totalPrice || 0).toLocaleString()}원</div>
+                <button class="remove-btn" onclick="removeItem('${item.skuId}')">삭제</button>
+            `;
+            return div;
+        }
+
+        // 서비스 선택 표시
+        function displayServiceSelection(currentServiceType) {
+            const serviceOptions = document.querySelectorAll('input[name="serviceType"]');
+            
+            serviceOptions.forEach(option => {
+                option.checked = option.value === currentServiceType;
+                option.closest('.service-option').classList.toggle('selected', option.checked);
+            });
+        }
+
+        // 서비스 타입 업데이트
+        async function updateServiceType() {
+            const selectedServiceType = document.querySelector('input[name="serviceType"]:checked');
+            if (!selectedServiceType) return;
+
+            try {
+                const response = await fetch(`/api/cart/${cartId}/service-type?serviceType=${selectedServiceType.value}`, {
+                    method: 'PUT'
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showAlert(result.message, 'success');
+                    
+                    // 선택된 옵션 스타일 업데이트
+                    document.querySelectorAll('.service-option').forEach(option => {
+                        option.classList.remove('selected');
+                    });
+                    selectedServiceType.closest('.service-option').classList.add('selected');
+                    
+                    // 총 금액 업데이트
+                    updateTotalAmount();
+                } else {
+                    showAlert(result.message || '서비스 선택 중 오류가 발생했습니다.', 'error');
+                }
+            } catch (error) {
+                console.error('서비스 타입 업데이트 실패:', error);
+                showAlert('서비스 선택 중 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        // 총 금액 업데이트
+        async function updateTotalAmount() {
+            try {
+                const response = await fetch(`/api/cart/${cartId}/total`);
+                const result = await response.json();
+                
+                if (response.ok && result.data) {
+                    const totalData = result.data;
+                    document.getElementById('totalAmount').textContent = totalData.formattedPrice || '0원';
+                    
+                    let details = '';
+                    if (totalData.serviceType === 'MOVING_SERVICE') {
+                        details = '이사 서비스 포함 (+500,000원)';
+                    } else if (totalData.serviceType === 'JUST_DELIVERY') {
+                        details = '일반 배송 서비스';
+                    } else {
+                        details = '서비스를 선택해주세요';
+                    }
+                    document.getElementById('totalDetails').textContent = details;
+                    
+                    // 결제 버튼 활성화/비활성화
+                    const checkoutBtn = document.getElementById('checkoutBtn');
+                    const canCheckout = totalData.serviceType !== 'NOT_SELECTED' && totalData.totalPrice > 0;
+                    checkoutBtn.disabled = !canCheckout;
+                    
+                } else {
+                    throw new Error('총 금액 조회 실패');
+                }
+            } catch (error) {
+                console.error('총 금액 업데이트 실패:', error);
+                document.getElementById('totalAmount').textContent = '계산 오류';
+                document.getElementById('totalDetails').textContent = '총 금액을 계산할 수 없습니다';
+            }
+        }
+
+        // 수량 변경
+        async function changeQuantity(skuId, change) {
+            if (change > 0) {
+                try {
+                    const response = await fetch(`/api/cart/${cartId}/items/${skuId}/increase?quantity=${change}`, {
+                        method: 'PUT'
+                    });
+                    
+                    if (response.ok) {
+                        loadCartData(); // 전체 다시 로드
+                        showAlert('수량이 변경되었습니다.', 'success');
+                    }
+                } catch (error) {
+                    console.error('수량 변경 실패:', error);
+                    showAlert('수량 변경 중 오류가 발생했습니다.', 'error');
+                }
+            } else {
+                // 수량 감소는 현재 API에 없으므로 삭제로 처리
+                showAlert('수량 감소 기능은 현재 지원되지 않습니다. 삭제 버튼을 사용해주세요.', 'warning');
+            }
+        }
+
+        // 상품 삭제
+        async function removeItem(skuId) {
+            if (!confirm('정말로 이 상품을 삭제하시겠습니까?')) return;
+
+            try {
+                const response = await fetch(`/api/cart/${cartId}/items/${skuId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    loadCartData(); // 전체 다시 로드
+                    showAlert('상품이 삭제되었습니다.', 'success');
+                } else {
+                    showAlert('상품 삭제 중 오류가 발생했습니다.', 'error');
+                }
+            } catch (error) {
+                console.error('상품 삭제 실패:', error);
+                showAlert('상품 삭제 중 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        // 결제 진행
+        function proceedToCheckout() {
+            const selectedService = document.querySelector('input[name="serviceType"]:checked');
+            if (!selectedService) {
+                showAlert('배송 서비스를 선택해주세요.', 'warning');
+                return;
+            }
+            
+            // 결제 페이지로 이동 (Order 생성 후)
+            window.location.href = `/payment/page/${cartId}`;
+        }
+
+        // 쇼핑 계속하기
+        function continueShopping() {
+            window.location.href = '/';
+        }
+
+        // 장바구니 새로고침
+        function refreshCart() {
+            loadCartData();
+        }
+
+        // UI 유틸리티 함수들
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+
+        function showEmptyCart() {
+            document.getElementById('emptyCart').style.display = 'block';
+            showCartContent(false);
+        }
+
+        function showCartContent(show) {
+            const elements = ['cartItems', 'serviceSelection', 'totalSection', 'actionButtons'];
+            elements.forEach(id => {
+                document.getElementById(id).style.display = show ? 'block' : 'none';
+            });
+            document.getElementById('emptyCart').style.display = show ? 'none' : 'block';
+        }
+
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertMessage = document.getElementById('alertMessage');
+            
+            alertMessage.textContent = message;
+            alertMessage.className = `alert alert-${type}`;
+            alertContainer.style.display = 'block';
+            
+            // 3초 후 자동 숨김
+            setTimeout(() => {
+                alertContainer.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

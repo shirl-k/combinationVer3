@@ -1,7 +1,6 @@
 package com.example.combination.Assembler;
 
 import com.example.combination.domain.order.CartItem;
-import com.example.combination.domain.order.ShoppingCart;
 import com.example.combination.dto.CartItemDTO;
 import lombok.Getter;
 import org.springframework.stereotype.Component;

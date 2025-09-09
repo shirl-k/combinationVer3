@@ -3,7 +3,7 @@ package com.example.combination.dto;
 import com.example.combination.domain.valuetype.HomeAddress;
 import com.example.combination.domain.valuetype.MovingServiceAddress;
 
-import jakarta.persistence.Column;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,5 +19,5 @@ public class MovingServiceDTO {
 
     private MovingServiceAddress movingServiceAddress;
 
-    private String movingServiceDescription;
+    private String requestDescription; //배송 요청사항
 }

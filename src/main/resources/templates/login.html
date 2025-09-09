@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 - 인테리어 쇼핑몰</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        
+        .social-login {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .google-btn {
+            background: #4285f4;
+            color: white;
+        }
+        
+        .google-btn:hover {
+            background: #357ae8;
+            transform: translateY(-2px);
+        }
+        
+        .naver-btn {
+            background: #03c75a;
+            color: white;
+        }
+        
+        .naver-btn:hover {
+            background: #02b351;
+            transform: translateY(-2px);
+        }
+        
+        .kakao-btn {
+            background: #fee500;
+            color: #3c1e1e;
+        }
+        
+        .kakao-btn:hover {
+            background: #fdd835;
+            transform: translateY(-2px);
+        }
+        
+        .btn-icon {
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+        
+        .divider {
+            margin: 2rem 0;
+            position: relative;
+            text-align: center;
+        }
+        
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #ddd;
+        }
+        
+        .divider span {
+            background: white;
+            padding: 0 1rem;
+            color: #666;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background: #fdf2f2;
+            border-radius: 5px;
+            border: 1px solid #fecaca;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">🏠 인테리어 쇼핑몰</div>
+        <div class="subtitle">소셜 로그인으로 간편하게 시작하세요</div>
+        
+        <div th:if="${param.error}" class="error-message">
+            로그인에 실패했습니다. 다시 시도해주세요.
+        </div>
+        
+        <div class="social-login">
+            <a href="/oauth2/authorization/google" class="social-btn google-btn">
+                <span class="btn-icon">🔍</span>
+                Google로 로그인
+            </a>
+            
+            <a href="/oauth2/authorization/naver" class="social-btn naver-btn">
+                <span class="btn-icon">N</span>
+                Naver로 로그인
+            </a>
+            
+            <a href="/oauth2/authorization/kakao" class="social-btn kakao-btn">
+                <span class="btn-icon">💬</span>
+                Kakao로 로그인
+            </a>
+        </div>
+        
+        <div class="divider">
+            <span>또는</span>
+        </div>
+        
+        <p style="color: #666; font-size: 0.9rem;">
+            소셜 로그인을 통해 회원가입과 로그인이 동시에 진행됩니다.
+        </p>
+    </div>
+</body>
+</html>

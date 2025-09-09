@@ -1,19 +1,17 @@
 package com.example.combination.service;
 
-import com.example.combination.domain.business.price.JustDeliveryPricePolicy;
-import com.example.combination.domain.business.price.MovingServicePricePolicy;
 import com.example.combination.domain.delivery.ServiceType;
 import com.example.combination.domain.member.Member;
 import com.example.combination.domain.order.Order;
 import com.example.combination.domain.order.OrderItem;
 import com.example.combination.domain.order.OrderStatus;
-import com.example.combination.domain.payment.PaymentMethod;
 import com.example.combination.exception.OrderNotFoundException;
-import com.example.combination.repository.MemberRepository;
 import com.example.combination.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 
@@ -23,9 +21,7 @@ import java.util.List;
     public class OrderService {
 
         private final OrderRepository orderRepository;
-        private final MemberRepository memberRepository;
-        private final JustDeliveryPricePolicy justDeliveryPricePolicy;
-        private final MovingServicePricePolicy movingServicePricePolicy;
+
 
             //주문 수정 : 변경감지
             public void updateOrderStatus(Long orderId, OrderStatus newStatus) {
@@ -35,25 +31,45 @@ import java.util.List;
             order.changeOrderStatus(newStatus);  //변경 감지 (JPA가 영속 상태 엔티티 조회로 감시해서 커밋시점에 변경된 데이터 업데이트)
             }
 
-            public int calculateFinalPrice(Order order) {
-                if(order.getServiceType() == ServiceType.JUST_DELIVERY) {
-                    return justDeliveryPricePolicy.calculatePrice(order);
-                }else if(order.getServiceType() == ServiceType.MOVING_SERVICE) {
-                    return movingServicePricePolicy.calculatePrice(order);
-                }else throw new IllegalStateException("배송 서비스 정보를 찾을 수 없습니다.");
+
+
+        //포인트 사용 여부 - 포인트 차감된 결제 금액
+//        public void calculateFinalPrice(Member member) {
+//        int total = calculateLineTotalPrice();
+//
+//        if(usePoints) {
+//            int availablePoints = member.getAvailablePoints();
+//            this.usedPoints = Math.min(total, availablePoints); //Math.min
+//            this.finalPrice = total - this.usedPoints;
+//        } else {
+//            this.finalPrice = total;
+//            this.usedPoints = 0;
+//        }
+//    }
+//        public int getFinalPrice() {
+//        return finalPrice;
+//    }
+//
+//        public int getUsedPoints() {
+//        return usedPoints;
+//    }
+        //public int calculateLineTotalPrice() {
+//        int basePrice = orderItems.stream()
+//                .filter(OrderItem::isSelected)
+//                .mapToInt(OrderItem::getLineTotal) //unitPrice * quantity
+//                .sum();
+
+           // 주문 생성 : CREATED OrderService: (흐름/연동)
+                //Member member, List<OrderItem> orderItems
+           //            , ServiceType serviceType, OrderStatus orderStatus, boolean usePoints, int usedPoints
+            public Order createOrder(Member member, List<OrderItem> orderItems, ServiceType serviceType,OrderStatus orderStatus, boolean usePoints, int usedPoints) {
+                Order order = Order.createOrder(member, orderItems,serviceType,orderStatus,usePoints,usedPoints);
+
+                order.applyPoints(); //최종 금액 계산(포인트 반영)
+                orderRepository.save(order);
+                return order;
             }
 
-            //주문 생성 : CREATED OrderService: (흐름/연동)
-
-//            public Order createOrder(Member member, List<OrderItem> orderItems, PaymentMethod paymentMethod
-//                    , //JustDelivery justDelivery, MovingService movingService, OrderStatus orderStatus, boolean usePoints, LocalDateTime createOrderDate, int usedPoints) {
-//                Order order = Order.createFinalOrder(member, orderItems,paymentMethod, deliveryForm,orderStatus,usePoints,usedPoints);
-//
-//                order.calculateFinalPrice(member); //최종 금액 계산(포인트 반영)
-//                orderRepository.save(order);
-//                return order;
-//            }
-//
 
              //주문 승인 : CONFIRMED
             public void confirmOrder(Long orderId) {
@@ -65,7 +81,6 @@ import java.util.List;
                 Member member = order.getMember();
 
                 //포인트 적용 최종 가격
-                order.calculateFinalPrice(member);
                 //포인트 사용 시
                     if(order.isUsePoints()) {
                         int pointsToUse = order.getUsedPoints();

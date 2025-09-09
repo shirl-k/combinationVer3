@@ -1,6 +1,5 @@
 package com.example.combination.domain.item;
 
-import com.example.combination.domain.category.CategoryItem;
 import com.example.combination.domain.order.CartItem;
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,6 +29,7 @@ public class SKU extends Item { //재고 관리 단위
     private String size;
 
     @OneToMany(mappedBy = "sku", cascade = CascadeType.ALL,orphanRemoval = true)
+    @Builder.Default
     private List<CartItem> cartItems = new ArrayList<>();
 
 

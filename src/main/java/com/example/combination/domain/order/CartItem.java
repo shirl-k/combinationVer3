@@ -36,6 +36,7 @@ public class CartItem {
     private int quantity; //주문 상품별 수량
     private int unitPrice; // 단가
 
+    @Builder.Default
     private boolean selected = true; // 장바구니에서 체크된 상품만 결제 적용하도록 갖고 있는 필드
 
     // DTO-> 엔티티 static 팩토리 메서드 :  CartItemRequestDTO -> CartItem 엔티티 변환, CartItem 객체 생성 (이후에 장바구니에서 CartItem(연관관계) -> CartItemDTO: Assembler 담당)

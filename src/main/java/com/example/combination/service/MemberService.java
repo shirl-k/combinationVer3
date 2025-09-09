@@ -4,16 +4,11 @@ package com.example.combination.service;
 import com.example.combination.domain.member.LogInStatus;
 import com.example.combination.domain.member.Member;
 import com.example.combination.domain.member.MemberStatus;
-import com.example.combination.domain.valuetype.UserInfo;
 import com.example.combination.exception.MemberNotFoundException;
 import com.example.combination.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.swing.plaf.PanelUI;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

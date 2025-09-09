@@ -2,7 +2,6 @@ package com.example.combination.repository;
 
 import com.example.combination.domain.item.SKU;
 import com.example.combination.domain.order.CartItem;
-import com.example.combination.dto.CartItemRequestDTO;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

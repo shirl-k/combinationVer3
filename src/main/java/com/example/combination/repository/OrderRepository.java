@@ -3,10 +3,8 @@ package com.example.combination.repository;
 
 import com.example.combination.domain.member.Member;
 import com.example.combination.domain.order.Order;
-import com.example.combination.domain.order.OrderStatus;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

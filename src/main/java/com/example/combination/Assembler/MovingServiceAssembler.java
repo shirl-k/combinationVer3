@@ -15,7 +15,7 @@ public class MovingServiceAssembler {
                 .phoneNum(order.getMember().getUserInfo().getPhoneNum())
                 .homeAddress(dto.getHomeAddress())
                 .movingServiceAddress(dto.getMovingServiceAddress())
-                .movingServiceDescription(dto.getMovingServiceDescription())
+                .movingServiceDescription(dto.getRequestDescription())
                 .order(order)
                 .movingServiceStatus(MovingServiceStatus.READY)
                 .build();

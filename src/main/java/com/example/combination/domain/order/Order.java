@@ -2,15 +2,10 @@ package com.example.combination.domain.order;
 
 import com.example.combination.domain.delivery.*;
 import com.example.combination.domain.member.Member;
-import com.example.combination.domain.member.MembershipGrade;
 import com.example.combination.domain.movingService.MovingService;
-import com.example.combination.domain.payment.PaymentMethod;
-import com.example.combination.domain.valuetype.DeliveryAddress;
-import com.example.combination.domain.valuetype.HomeAddress;
-import com.example.combination.domain.valuetype.MovingServiceAddress;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -34,12 +29,9 @@ public class Order {
         @JoinColumn(name = "member_id")
         private Member member;
 
-        @Enumerated(EnumType.STRING)
-        private MembershipGrade membershipGrade;
-
 
         @Enumerated(EnumType.STRING)
-        private PaymentMethod paymentMethod;
+        private ServiceType serviceType;
 
 
         @Enumerated(EnumType.STRING)
@@ -47,10 +39,16 @@ public class Order {
                                             // CREATED(주문 생성됨. 결제 전), CONFIRMED(결제 성공, 주문 확정), CANCELLED(결제 전 취소), COMPLETED(배송까지 완료)
 
         @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+        @Builder.Default
         private List<OrderItem> orderItems = new ArrayList<>();
 
+        private int totalAmount; //상품 총액 + 서비스 비용
 
-        private LocalDate createOrderDate; //주문 생성 시점
+        private int finalPrice; // 포인트까지 적용된 최종 금액
+
+        private int usedPoints; //사용한 포인트
+
+        private boolean usePoints;
 
 
     //=========================================================//
@@ -62,45 +60,37 @@ public class Order {
         @OneToOne(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
         private MovingService movingService;
     //==========================================================//
-//        @Embedded
-//        private HomeAddress homeAddress;
-//
-//        @Embedded
-//        private MovingServiceAddress movingServiceAddress;
-//
-//        @Embedded
-//        private DeliveryAddress deliveryAddress;
-//
+        private LocalDate createOrderDate; //주문 생성 시점
 
-        @Enumerated(EnumType.STRING)
-        private ServiceType serviceType;
 
-//        @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-//        private SelectedServiceType selectedServiceType;
-
-        private int basePrice; //배송서비스 (추가 배송비 없음)
+        private int itemsTotal; // 상품 총합 금액 (현재는 배송서비스 선택 시 총 금액과 동일)
 
    //==========================================================//
-//        @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
-//        private DeliveryAddressForm deliveryAddressForm;
 
-        @Column(length = 500)
-        private String justDeliveryDescription;
-
-        @Column(length = 500)
-        private String movingServiceDescription;
-
-        //==================================================//
-
-        private boolean usePoints;
-
-        private int finalPrice;
-
-        private int usedPoints;
 
         //============핵심 비즈니스 로직==============//
+        //Order 변경감지
+        public void changeOrderStatus(OrderStatus orderStatus) {
+            this.orderStatus = orderStatus;
+        }
 
-        //===========연관관계 편의 메서드 =================//orderItem 과 Order 양쪽 동일하게 업데이트
+        //장바구니 총합 금액 (예상 지불 금액)  -> OrderService 로 이동. Order는 주문 상태만 관리
+//        public int calculateLineTotalPrice() {
+//        int basePrice = orderItems.stream()
+//                .filter(OrderItem::isSelected)
+//                .mapToInt(OrderItem::getLineTotal) //unitPrice * quantity
+//                .sum();
+//        if(basePrice <=0) {
+//            throw new IllegalStateException("주문 상품을 최소 1개 담아야합니다.");
+//        }
+//        return switch (serviceType) {
+//            case JUST_DELIVERY -> basePrice; //basePrice - memberDiscount 값이 음수가 될 수 있는 경우 고려해서 memberDiscount 초기화해야함
+//            case MOVING_SERVICE -> basePrice + movingService.calculateMovingServicePrice(); //memberDiscount 따로 먼저 계산 후 차감
+//        };
+//    }
+
+
+    //===========연관관계 편의 메서드 =================//orderItem 과 Order 양쪽 동일하게 업데이트
         public void addOrderItem(OrderItem orderItem) {
             orderItems.add(orderItem);
             orderItem.setOrder(this);
@@ -128,102 +118,60 @@ public class Order {
             this.justDelivery = null;
             this.serviceType = ServiceType.MOVING_SERVICE;
         }
-        //==============================================//
-        //private boolean movingService;
 
-//        public void setDeliveryForm( //MovingServiceForm movingServiceForm) {
-//               // if(movingService) { //이사 서비스 이용 시
-//                    if (movingServiceForm == null) {
-//                        throw new IllegalStateException("이사 서비스 이용 시 현 주소지와 배송지 주소 입력이 필수입니다.");
-//                    }//기존 주소와 새 주소, 배송 요청사항
-//                   // this.homeAddress = movingServiceForm.getHomeAddress();
-//                    //this.movingServiceAddress = movingServiceForm.getMovingServiceAddress();
-//                    //this.movingServiceDescription = movingServiceForm.getMovingServiceDescription();
-//
-//                    // 홈/비즈니스용 배송만 서비스 필드 초기화
-//                    this.deliveryAddress = null;
-//                    this.deliveryDescription = null;
-//
-//                } else { //홈/비즈니스 용 서비스 이용 시
-//                    if (deliveryForm == null) {
-//                        throw new IllegalStateException("배송지 입력은 필수입니다.");
-//                    }
-//                    //배송지와 배송지 옵션
-//                    this.deliveryAddress = deliveryForm.getDeliveryAddress();
-//                    this.deliveryDescription = deliveryForm.getDeliveryDescription();
-//
-//                    //이사 서비스 필드 초기화
-//                    this.movingServiceAddress = null;
-//                    this.movingServiceDescription = null;
-//                }
-//        }
-
-//        public void setMovingServiceForm(MovingServiceForm entity) {
-//            this.movingServiceAddress = entity.getMovingServiceAddress();
-//            this.homeAddress = entity.getHomeAddress();
-//            this.movingServiceDescription = entity.getMovingServiceDescription();
-//        }
-
-        //결제 방식
-        public void selectPaymentMethod(PaymentMethod paymentMethod) {
-            this.paymentMethod = paymentMethod;
-        }
-
-        //총 결제 금액
         public int calculateLineTotalPrice() {
-            return orderItems.stream()
-                    .filter(OrderItem::isSelected)
-                    .mapToInt(OrderItem::getLineTotal) //unitPrice * quantity
-                    .sum();
-        }
-//        public int calculateLineTotalPrice() {
-//            if (movingService == false) {
-//                return orderItems.stream()
-//                        .filter(OrderItem::isSelected)
-//                        .mapToInt(OrderItem::getLineTotal) // unitPrice * quantity
-//                        .sum();
-//            } else {
-//                return orderItems.stream()
-//                        .filter(OrderItem::isSelected)
-//                        .mapToInt(OrderItem::getLineTotal) // unitPrice * quantity
-//                        .sum() + movingServicePrice ;
-//            }
-//        }
+        //상품 총액 계산
+        int itemsTotal = orderItems.stream()
+                .mapToInt(OrderItem::getLineTotal)
+                .sum();
 
+        int servicePrice = 0; //서비스 비용 초기화
 
-        //포인트 사용 여부 - 포인트 차감된 결제 금액
-        public void calculateFinalPrice(Member member) {
-            int total = calculateLineTotalPrice();
-
-            if(usePoints) {
-                int availablePoints = member.getAvailablePoints();
-                this.usedPoints = Math.min(total, availablePoints); //Math.min
-                this.finalPrice = total - this.usedPoints;
-            } else {
-                this.finalPrice = total;
-                this.usedPoints = 0;
+        // NPE 방지: 주문 엔티티의 serviceType이 null이 아닐 때만 로직을 실행
+        if (this.serviceType != null) {
+            switch (this.serviceType) { //서비스 유형에 따라 다른 비용 추가
+                case JUST_DELIVERY:
+                    if (this.justDelivery != null) { // JustDelivery 엔티티가 존재할 때만 비용을 계산
+                        servicePrice = this.justDelivery.calculateDeliveryPrice();
+                    }
+                    break;
+                case MOVING_SERVICE:
+                    if (this.movingService != null) { // MovingService 엔티티가 존재할 때만 비용을 계산
+                        servicePrice = this.movingService.calculateMovingServicePrice();
+                    }
+                    break;
             }
         }
-        public int getFinalPrice() {
-            return finalPrice;
-        }
+        return this.totalAmount = itemsTotal + servicePrice;
+    }
 
-        public int getUsedPoints() {
-            return usedPoints;
+    private int pointsToUse;
+
+    //포인트 적용 금액
+    public void applyPoints() {
+        if(usePoints) {
+            int pointsToUse = Math.min(this.pointsToUse, this.member.getAvailablePoints());
+            this.finalPrice = this.totalAmount - pointsToUse;
+            this.usedPoints = pointsToUse;
         }
+        else {
+            this.finalPrice = this.totalAmount;
+            this.usedPoints = 0;
+        }
+    }
+
+
+
         //최종 주문 스냅샷
 
-    public static Order createFinalOrder(Member member, List<OrderItem> orderItems, PaymentMethod paymentMethod
-            , JustDelivery justDelivery, OrderStatus orderStatus, boolean usePoints, int usedPoints) {
+    public static Order createOrder(Member member, List<OrderItem> orderItems
+            , ServiceType serviceType, OrderStatus orderStatus, boolean usePoints, int usedPoints) {
         Order order = Order.builder()
                 .member(member)
-                .membershipGrade(member.getMembershipGrade())
                 .orderStatus(OrderStatus.CREATED)
                 .orderItems(new ArrayList<>(orderItems))
                 .usePoints(usePoints)
-                .justDelivery(justDelivery)
-                //.deliveryForm(deliveryForm)
-                .paymentMethod(paymentMethod)
+                .serviceType(serviceType)
                 .createOrderDate(LocalDate.now())
                 .usedPoints(usedPoints)
                 .build();
@@ -232,9 +180,6 @@ public class Order {
         return order;
     }
 
-        //Order 변경감지
-        public void changeOrderStatus(OrderStatus orderStatus) {
-            this.orderStatus = orderStatus;
-        }
+
 }
 

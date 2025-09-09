@@ -11,6 +11,7 @@ import java.util.List;
 
 
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)//매개변수 없는 생성자
 @AllArgsConstructor
 @Builder
@@ -40,6 +41,7 @@ public class Member {
 
     //회원별 주문 목록
     @OneToMany(mappedBy = "member")
+    @Builder.Default
     private List<Order> orders = new ArrayList<>(); //매핑 안하면 빨간줄
 
     //valuetype 패키지
@@ -53,12 +55,13 @@ public class Member {
 //    @Embedded
 //    private DeliveryAddress deliveryAddress; // 배송지 주소
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "social_account_id")
-    private SocialAccount socialAccount;
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<SocialAccount> socialAccounts = new ArrayList<>();
 
-    @OneToOne(mappedBy = "member",fetch = FetchType.LAZY)
-    private ShoppingCart shoppingCart;
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<ShoppingCart> shoppingCarts = new ArrayList<>();
 
     private int availablePoints; //사용 가능 포인트(누적)
     private int usedPoints;
@@ -98,6 +101,30 @@ public class Member {
     //포인트 누적
     public void addMemberPoints(int newPoints) {
         this.availablePoints += newPoints;
+    }
+    
+    // 장바구니 관련 메서드들
+    public void addShoppingCart(ShoppingCart cart) {
+        shoppingCarts.add(cart);
+        cart.setMember(this);
+    }
+    
+    public void removeShoppingCart(ShoppingCart cart) {
+        shoppingCarts.remove(cart);
+        cart.setMember(null);
+    }
+    
+    public ShoppingCart getDefaultCart() {
+        return shoppingCarts.stream()
+                .filter(ShoppingCart::isDefault)
+                .findFirst()
+                .orElse(null);
+    }
+    
+    public List<ShoppingCart> getNonDefaultCarts() {
+        return shoppingCarts.stream()
+                .filter(cart -> !cart.isDefault())
+                .toList();
     }
 
 }

@@ -21,6 +21,7 @@ public class Category {
     private String name;
 
     @OneToMany(mappedBy = "category")
+    @Builder.Default
     private List<CategoryItem> categoryItems = new ArrayList<>();
 
     private String model; //모델명

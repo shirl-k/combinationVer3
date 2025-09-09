@@ -9,7 +9,6 @@ import lombok.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 public class Curtain extends Item {
     private int size;
     private int texture;

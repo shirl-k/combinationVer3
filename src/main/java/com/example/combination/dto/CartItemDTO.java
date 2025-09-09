@@ -1,11 +1,7 @@
 package com.example.combination.dto;
 
 
-import com.example.combination.Assembler.CartItemAssembler;
-import com.example.combination.domain.item.SKU;
-
 import lombok.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Getter

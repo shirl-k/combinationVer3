@@ -26,6 +26,9 @@ public class JustDelivery {
     @Embedded
     private DeliveryAddress deliveryAddress;
 
+    @Column(length = 500)
+    private String deliveryDescription; //배송 요청사항 (DTO 로 받아옴)
+
     @Enumerated(EnumType.STRING)
     private JustDeliveryStatus justDeliveryStatus; //READY(배송 준비 중: 상품 패킹),SHIPPED(출고됨(운송장 번호 생성)),IN_TRANSIT(배송 중),DELIVERED(배송 완료),RETURNED(반송됨)
 
@@ -41,8 +44,7 @@ public class JustDelivery {
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @Column(length = 500)
-    private String deliveryDescription;
+
 
     public void changeJustDeliveryStatus(JustDeliveryStatus newStatus) {
         this.justDeliveryStatus = newStatus;
@@ -60,5 +62,9 @@ public class JustDelivery {
         if (order.getJustDelivery() != null) {
             order.setJustDelivery(this);
         }
+    }
+
+    public int calculateDeliveryPrice() {  //추가 배송비
+        return 0;
     }
 }

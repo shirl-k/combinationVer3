@@ -1,6 +1,7 @@
 package com.example.combination.service;
 
 import com.example.combination.Assembler.CartItemAssembler;
+import com.example.combination.domain.delivery.ServiceType;
 import com.example.combination.domain.item.SKU;
 import com.example.combination.domain.order.CartItem;
 import com.example.combination.domain.order.ShoppingCart;
@@ -59,13 +60,39 @@ public class ShoppingCartService {
         cart.removeItemBySkuId(skuId);
     }
 
-    // 수량 수정  - --->
-    public void increaseQuantity(Long cartId,String skuId,int quantity) {
+    // 수량 수정
+    @Transactional
+    public void increaseQuantity(Long cartId, String skuId, int quantity) {
         ShoppingCart cart = shoppingCartRepository.findById(cartId)
                 .orElseThrow(() -> new CartNotFoundException(cartId));
-
-
-
+        
+        cart.increaseQuantity(skuId, quantity);
+    }
+    
+    // ServiceType 설정
+    @Transactional
+    public void updateServiceType(Long cartId, ServiceType serviceType) {
+        ShoppingCart cart = shoppingCartRepository.findById(cartId)
+                .orElseThrow(() -> new CartNotFoundException(cartId));
+        
+        cart.updateServiceType(serviceType);
+        shoppingCartRepository.save(cart);
+    }
+    
+    // 총 금액 조회
+    @Transactional(readOnly = true)
+    public int calculateTotalPrice(Long cartId) {
+        ShoppingCart cart = shoppingCartRepository.findById(cartId)
+                .orElseThrow(() -> new CartNotFoundException(cartId));
+        
+        return cart.calculateTotalPrice();
+    }
+    
+    // 장바구니 조회
+    @Transactional(readOnly = true)
+    public ShoppingCart findById(Long cartId) {
+        return shoppingCartRepository.findById(cartId)
+                .orElseThrow(() -> new CartNotFoundException(cartId));
     }
 }
     /*

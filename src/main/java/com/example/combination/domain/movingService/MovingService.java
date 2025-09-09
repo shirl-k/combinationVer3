@@ -1,6 +1,7 @@
 package com.example.combination.domain.movingService;
 
 import com.example.combination.domain.order.Order;
+import com.example.combination.domain.order.ShoppingCart;
 import com.example.combination.domain.valuetype.HomeAddress;
 import com.example.combination.domain.valuetype.MovingServiceAddress;
 import jakarta.persistence.*;
@@ -54,6 +55,10 @@ public class MovingService {
     private LocalDateTime newHome;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_id", unique = true)
+    private ShoppingCart shoppingCart;
+
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", unique = true)
     private Order order;
 
@@ -86,5 +91,6 @@ public class MovingService {
     }
 
     public int calculateMovingServicePrice() {
+        return 500000; // 고정 이사 서비스 비용 : 50만원. 이사 비용 정책 추가해야함.
     }
 }

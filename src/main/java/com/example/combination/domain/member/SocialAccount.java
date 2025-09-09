@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -15,8 +16,19 @@ public class SocialAccount {
     @Column(name = "social_account_id")
     private Long id;
 
-    private String accoutInfo;
+    @Column(nullable = false)
+    private String provider; // google, naver, kakao
 
-    @OneToOne(mappedBy = "socialAccount",fetch = FetchType.LAZY) //mappedBy ="클래스 안의 필드명 그대로"
+    @Column(nullable = false)
+    private String providerId; // 소셜 로그인 제공자의 사용자 ID
+
+    @Column(nullable = false)
+    private String email;
+
+    @Column(nullable = false)
+    private String name;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
     private Member member;
 }

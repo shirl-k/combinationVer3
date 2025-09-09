@@ -18,7 +18,7 @@ public class JustDeliveryAssembler {
                 .name(member.getName())
                 .phoneNum(order.getMember().getUserInfo().getPhoneNum())
                 .deliveryAddress(dto.getDeliveryAddress())
-                .deliveryDescription(dto.getDeliveryDescription())
+                .deliveryDescription(dto.getRequestDescription())
                 .order(order)
                 .justDeliveryStatus(JustDeliveryStatus.READY)
                 .build();

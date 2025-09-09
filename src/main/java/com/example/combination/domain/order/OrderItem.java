@@ -36,8 +36,7 @@ public class OrderItem { //결제 시 스냅샷(결제 당시 금액 영수증�
 
     private int discountPrice;
 
-    private int lineTotal; //unitPriceAtOrder * quantity
-
+    @Builder.Default
     private boolean selected = true;
 
     @ManyToOne(fetch = FetchType.LAZY)
