@@ -4,6 +4,7 @@ import com.example.combination.dto.PgPaymentRequestDTO;
 import com.example.combination.dto.PgPaymentResponseDTO;
 import com.example.combination.dto.PaymentCallbackDTO;
 import com.example.combination.exception.PgApiException;
+import com.example.combination.exception.PgApiTimeoutException;
 import com.example.combination.service.PgApiService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -64,10 +65,15 @@ public class TossPaymentServiceImpl implements PgApiService {
             
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 Map<String, Object> responseBody = response.getBody();
+                
+                // NPE 방지: API 응답 값들을 안전하게 추출
+                Object paymentKey = responseBody.get("paymentKey");
+                Object checkoutUrl = responseBody.get("checkoutUrl");
+                
                 return PgPaymentResponseDTO.builder()
                         .success(true)
-                        .transactionId((String) responseBody.get("paymentKey"))
-                        .redirectUrl((String) responseBody.get("checkoutUrl"))
+                        .transactionId(paymentKey != null ? (String) paymentKey : "")
+                        .redirectUrl(checkoutUrl != null ? (String) checkoutUrl : "")
                         .rawResponse(objectMapper.writeValueAsString(responseBody))
                         .message("결제 요청 성공")
                         .build();
@@ -75,13 +81,18 @@ public class TossPaymentServiceImpl implements PgApiService {
                 throw new PgApiException("토스페이먼츠 API 호출 실패: " + response.getStatusCode());
             }
             
+        } catch (org.springframework.web.client.ResourceAccessException e) {
+            log.error("토스페이먼츠 API 타임아웃", e);
+            throw new PgApiTimeoutException("결제 요청", 30);
+        } catch (org.springframework.web.client.HttpClientErrorException e) {
+            log.error("토스페이먼츠 API 클라이언트 오류: {}", e.getStatusCode(), e);
+            throw new PgApiException("토스페이먼츠 API 클라이언트 오류: " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
+        } catch (org.springframework.web.client.HttpServerErrorException e) {
+            log.error("토스페이먼츠 API 서버 오류: {}", e.getStatusCode(), e);
+            throw new PgApiException("토스페이먼츠 API 서버 오류: " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
         } catch (Exception e) {
             log.error("토스페이먼츠 결제 요청 실패", e);
-            return PgPaymentResponseDTO.builder()
-                    .success(false)
-                    .errorMessage(e.getMessage())
-                    .message("결제 요청 실패")
-                    .build();
+            throw new PgApiException("결제 요청 실패: " + e.getMessage());
         }
     }
     
@@ -108,10 +119,14 @@ public class TossPaymentServiceImpl implements PgApiService {
             
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 Map<String, Object> responseBody = response.getBody();
+                
+                // NPE 방지: API 응답 값을 안전하게 추출
+                Object approvedAt = responseBody.get("approvedAt");
+                
                 return PgPaymentResponseDTO.builder()
                         .success(true)
                         .transactionId(transactionId)
-                        .approvalNumber((String) responseBody.get("approvedAt"))
+                        .approvalNumber(approvedAt != null ? (String) approvedAt : "")
                         .rawResponse(objectMapper.writeValueAsString(responseBody))
                         .message("결제 승인 성공")
                         .build();
@@ -218,7 +233,10 @@ public class TossPaymentServiceImpl implements PgApiService {
             // 토스페이먼츠 서명 검증 로직
             // 실제 구현에서는 토스페이먼츠에서 제공하는 서명 검증 방법을 사용
             String expectedSignature = generateSignature(callback);
-            return expectedSignature.equals(callback.getSignature());
+            // NPE 방지: 서명 값들을 안전하게 비교
+            String callbackSignature = callback.getSignature();
+            return expectedSignature != null && callbackSignature != null && 
+                   expectedSignature.equals(callbackSignature);
         } catch (Exception e) {
             log.error("서명 검증 실패", e);
             return false;

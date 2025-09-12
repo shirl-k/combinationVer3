@@ -57,7 +57,7 @@ public class ShoppingCart { //실시간 계산 로직
     @Enumerated(EnumType.STRING)
     private ServiceType serviceType;   //서비스 옵션 선택 (배송만 서비스/ 이사서비스)
 
-    @OneToOne(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "shoppingCart", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private MovingService movingService;
 
 //===========핵심 비즈니스 로직============//ss
@@ -104,14 +104,28 @@ public class ShoppingCart { //실시간 계산 로직
 
     //skuId로 바로 삭제  - 도메인 편의 메서드
     public void removeItemBySkuId(String skuId) {
-        CartItem target = cartItems.stream().filter(cartItem -> cartItem.getSku().getSkuId().equals(skuId))
+        if (skuId == null) {
+            throw new IllegalArgumentException("SKU ID는 null일 수 없습니다.");
+        }
+        
+        CartItem target = cartItems.stream()
+                .filter(cartItem -> cartItem != null && 
+                                   cartItem.getSku() != null && 
+                                   skuId.equals(cartItem.getSku().getSkuId()))
                 .findFirst()
                 .orElseThrow(() -> new SKUNotFoundException("해당 SKU 없음: " + skuId));
         removeItemFromCart(target);
     }
 
     public Optional<CartItem> findItemBySkuId(String skuId) {
-        return cartItems.stream().filter(cartItem -> cartItem.getSku().getSkuId().equals(skuId))
+        if (skuId == null) {
+            return Optional.empty();
+        }
+        
+        return cartItems.stream()
+                .filter(cartItem -> cartItem != null && 
+                                   cartItem.getSku() != null && 
+                                   skuId.equals(cartItem.getSku().getSkuId()))
                 .findFirst();
     }
 
@@ -162,10 +176,12 @@ public class ShoppingCart { //실시간 계산 로직
         
         // MOVING_SERVICE 선택 시 MovingService가 없으면 기본값으로 생성
         if (newServiceType == ServiceType.MOVING_SERVICE && this.movingService == null) {
-            this.movingService = MovingService.builder()
-                    .shoppingCart(this)
+            MovingService movingService = MovingService.builder()
+                    .shoppingCartId(this.cartId)
                     .movingServiceDescription("기본 이사 서비스")
                     .build();
+            movingService.assignToCart(this.cartId);
+            this.movingService = movingService;
         }
         // JUST_DELIVERY 선택 시 MovingService 제거
         else if (newServiceType == ServiceType.JUST_DELIVERY) {

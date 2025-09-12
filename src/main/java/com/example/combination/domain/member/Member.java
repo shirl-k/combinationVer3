@@ -3,6 +3,7 @@ package com.example.combination.domain.member;
 import com.example.combination.domain.order.Order;
 import com.example.combination.domain.order.ShoppingCart;
 import com.example.combination.domain.valuetype.*;
+import com.example.combination.exception.InsufficientPointsException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "member")
+@Table(name = "members")
 public class Member {
     @Id @GeneratedValue
     @Column(name = "member_id")
@@ -87,11 +88,25 @@ public class Member {
 
     //포인트 사용 시 차감
     public void usePoints(int pointsToUse) {
-        if (pointsToUse > this.availablePoints) {
-            throw new IllegalArgumentException("보유 포인트를 초과했습니다."); //
+        if (pointsToUse <= 0) {
+            throw new IllegalArgumentException("사용할 포인트는 0보다 커야 합니다: " + pointsToUse);
         }
+        
+        if (pointsToUse > this.availablePoints) {
+            throw new InsufficientPointsException(pointsToUse, this.availablePoints);
+        }
+        
         this.availablePoints -= pointsToUse;
-
+    }
+    
+    /**
+     * 포인트 복구 (주문 취소 시 사용)
+     */
+    public void restorePoints(int pointsToRestore) {
+        if (pointsToRestore <= 0) {
+            throw new IllegalArgumentException("복구할 포인트는 0보다 커야 합니다: " + pointsToRestore);
+        }
+        this.availablePoints += pointsToRestore;
     }
     //현재 사용 가능 포인트
     public int getAvailablePoints() {

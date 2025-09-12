@@ -1,6 +1,8 @@
 package com.example.combination.domain.delivery;
 
+import com.example.combination.domain.common.OrderReference;
 import com.example.combination.domain.order.Order;
+import com.example.combination.domain.order.OrderStatus;
 import com.example.combination.domain.valuetype.DeliveryAddress;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,8 +15,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "just_delivery")
-public class JustDelivery {
+@Table(name = "just_deliveryies")
+public class JustDelivery implements OrderReference {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
@@ -24,6 +26,12 @@ public class JustDelivery {
     private String phoneNum; //가입 정보 - 전화번호
 
     @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "city", column = @Column(name = "just_city")),
+            @AttributeOverride(name = "district", column = @Column(name = "just_district")),
+            @AttributeOverride(name = "roadNameAddress", column = @Column(name = "just_road_name")),
+            @AttributeOverride(name = "zipcode", column = @Column(name = "just_zipcode"))
+    })
     private DeliveryAddress deliveryAddress;
 
     @Column(length = 500)
@@ -40,9 +48,15 @@ public class JustDelivery {
 
     private LocalDateTime deliveryTimeDelivered;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "order_id")
     private Order order;
+    
+    private Long orderCode; //주문 코드(주문 아이디)
+    
+    @Transient
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
 
 
@@ -56,12 +70,34 @@ public class JustDelivery {
         }
     }
 
-    //연관관계 편의 메서드  : Order <-> DeliveryAddressForm 동기화
-    public void setOrder(Order order) {
-        this.order = order;
-        if (order.getJustDelivery() != null) {
-            order.setJustDelivery(this);
-        }
+    /**
+     * OrderReference 인터페이스 구현
+     */
+    @Override
+    public Long getOrderId() {
+//        return orderId;
+        return orderCode;
+    }
+    
+    @Override
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
+    }
+    
+    /**
+     * 주문과의 연관관계 설정 (순환참조 방지)
+     */
+    public void assignToOrder(Long orderId, OrderStatus orderStatus) { //Long orderId
+        this.orderCode = orderId; //this.orderId = orderId
+        this.orderStatus = orderStatus;
+    }
+    
+    /**
+     * 주문과의 연관관계 해제
+     */
+    public void detachFromOrder() {
+        this.orderCode = null; //orderId
+        this.orderStatus = null;
     }
 
     public int calculateDeliveryPrice() {  //추가 배송비

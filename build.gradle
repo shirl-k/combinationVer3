@@ -36,15 +36,27 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'com.h2database:h2'
+
+	implementation 'com.h2database:h2:2.2.224'
+//	testImplementation 'com.h2database:h2'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
-	implementation 'org.apache.httpcomponents:httpclient:4.5.14'
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation files('libs/payment-sdk.jar')
+	// https://mvnrepository.com/artifact/org.springframework/spring-beans
+//	implementation("org.springframework:spring-beans:6.2.10")
+	// https://mvnrepository.com/artifact/org.springframework/spring-webmvc
+//	implementation("org.springframework:spring-webmvc:6.2.10")
+	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+	implementation("org.apache.commons:commons-lang3:3.18.0")
+//	implementation 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
+//	implementation 'org.apache.httpcomponents.core5:httpcore5:5.3.1'
+
+//	implementation 'org.apache.httpcomponents.client5:httpclient5:5.3'
 
 }
 

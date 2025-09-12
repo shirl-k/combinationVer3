@@ -12,8 +12,8 @@ import lombok.*;
 @AllArgsConstructor
 public class HomeAddress {
 
-    @Id @GeneratedValue
-    private Long id;
+//    @Id @GeneratedValue
+//    private Long id;
 
     private String city;    //시
     private String district; //구

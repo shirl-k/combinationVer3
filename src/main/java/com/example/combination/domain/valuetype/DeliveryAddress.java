@@ -10,8 +10,8 @@ import lombok.*;
 @AllArgsConstructor
 public class DeliveryAddress {
 
-    @Id @GeneratedValue
-    private Long id;
+//    @Id @GeneratedValue
+//    private Long id;
 
     private String city;    //시
     private String district; //구

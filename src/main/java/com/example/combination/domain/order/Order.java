@@ -3,6 +3,7 @@ package com.example.combination.domain.order;
 import com.example.combination.domain.delivery.*;
 import com.example.combination.domain.member.Member;
 import com.example.combination.domain.movingService.MovingService;
+import com.example.combination.exception.OrderStatusTransitionException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Entity
-@Table(name = "order")
+@Table(name = "orders")
 public class Order {
 
         @Id
@@ -73,7 +74,39 @@ public class Order {
         //============핵심 비즈니스 로직==============//
         //Order 변경감지
         public void changeOrderStatus(OrderStatus orderStatus) {
+            validateOrderStatusTransition(this.orderStatus, orderStatus);
             this.orderStatus = orderStatus;
+        }
+        
+        /**
+         * 주문 상태 전환 검증
+         */
+        private void validateOrderStatusTransition(OrderStatus fromStatus, OrderStatus toStatus) {
+            if (fromStatus == null) {
+                return; // 최초 생성 시에는 검증하지 않음
+            }
+            
+            // 허용되는 상태 전환 규칙
+            switch (fromStatus) {
+                case CREATED:
+                    if (toStatus != OrderStatus.CONFIRMED && toStatus != OrderStatus.CANCELLED) {
+                        throw new OrderStatusTransitionException(fromStatus, toStatus);
+                    }
+                    break;
+                case CONFIRMED:
+                    if (toStatus != OrderStatus.COMPLETED && toStatus != OrderStatus.CANCELLED) {
+                        throw new OrderStatusTransitionException(fromStatus, toStatus);
+                    }
+                    break;
+                case COMPLETED:
+                    // 완료된 주문은 더 이상 변경할 수 없음
+                    throw new OrderStatusTransitionException(fromStatus, toStatus);
+                case CANCELLED:
+                    // 취소된 주문은 더 이상 변경할 수 없음
+                    throw new OrderStatusTransitionException(fromStatus, toStatus);
+                default:
+                    throw new OrderStatusTransitionException(fromStatus, toStatus);
+            }
         }
 
         //장바구니 총합 금액 (예상 지불 금액)  -> OrderService 로 이동. Order는 주문 상태만 관리
@@ -82,45 +115,27 @@ public class Order {
 //                .filter(OrderItem::isSelected)
 //                .mapToInt(OrderItem::getLineTotal) //unitPrice * quantity
 //                .sum();
-//        if(basePrice <=0) {
-//            throw new IllegalStateException("주문 상품을 최소 1개 담아야합니다.");
+//
+//        int servicePrice = 0; //서비스 비용 초기화
+//
+//        switch (this.serviceType) { //서비스 유형에 따라 다른 비용 추가
+//            case JUST_DELIVERY:
+//                if (this.justDelivery != null) { // JustDelivery 엔티티가 존재할 때만 비용을 계산
+//                    servicePrice = this.justDelivery.calculateDeliveryPrice();
+//                }
+//                break;
+//            case MOVING_SERVICE:
+//                if (this.movingService != null) { // MovingService 엔티티가 존재할 때만 비용을 계산
+//                    servicePrice = this.movingService.calculateMovingServicePrice();
+//                }
+//                break;
 //        }
-//        return switch (serviceType) {
-//            case JUST_DELIVERY -> basePrice; //basePrice - memberDiscount 값이 음수가 될 수 있는 경우 고려해서 memberDiscount 초기화해야함
-//            case MOVING_SERVICE -> basePrice + movingService.calculateMovingServicePrice(); //memberDiscount 따로 먼저 계산 후 차감
-//        };
+//
+//        this.totalAmount = basePrice + servicePrice;
+//        return this.totalAmount;
 //    }
 
-
-    //===========연관관계 편의 메서드 =================//orderItem 과 Order 양쪽 동일하게 업데이트
-        public void addOrderItem(OrderItem orderItem) {
-            orderItems.add(orderItem);
-            orderItem.setOrder(this);
-        }
-        //주문 취소 OrderStatus - CANCELLED
-        public void removeOrderItem(OrderItem orderItem) {
-            orderItems.remove(orderItem);
-            orderItem.setOrder(null);
-        }
-        
-        //JustDelivery 연관관계 편의 메서드
-        public void setJustDelivery(JustDelivery form) {
-            this.justDelivery = form;
-            if(form != null) form.setOrder(this);
-            //상호 배타성 보장
-            this.movingService = null;
-            this.serviceType = ServiceType.JUST_DELIVERY;
-        }
-
-        //MovingService 연관관계 편의 메서드
-        public void setMovingService(MovingService form) {
-            this.movingService = form;
-            if(form != null) form.setOrder(this);
-            //상호 배타성 보장
-            this.justDelivery = null;
-            this.serviceType = ServiceType.MOVING_SERVICE;
-        }
-
+        //상품 총액 계산
         public int calculateLineTotalPrice() {
         //상품 총액 계산
         int itemsTotal = orderItems.stream()
@@ -144,44 +159,73 @@ public class Order {
                     break;
             }
         }
-        return this.totalAmount = itemsTotal + servicePrice;
+
+        this.totalAmount = itemsTotal + servicePrice;
+        return this.totalAmount;
     }
 
-    private int pointsToUse;
-
-    //포인트 적용 금액
-    public void applyPoints() {
-        if(usePoints) {
-            int pointsToUse = Math.min(this.pointsToUse, this.member.getAvailablePoints());
-            this.finalPrice = this.totalAmount - pointsToUse;
-            this.usedPoints = pointsToUse;
+        //포인트 적용 최종 금액 계산
+        public void applyPoints() {
+            if (usePoints) {
+                int availablePoints = member.getAvailablePoints();
+                this.usedPoints = Math.min(totalAmount, availablePoints);
+                this.finalPrice = totalAmount - this.usedPoints;
+            } else {
+                this.finalPrice = totalAmount;
+                this.usedPoints = 0;
+            }
         }
-        else {
-            this.finalPrice = this.totalAmount;
-            this.usedPoints = 0;
+
+        //===========연관관계 편의 메서드 =================//orderItem 과 Order 양쪽 동일하게 업데이트
+        public void addOrderItem(OrderItem orderItem) {
+            orderItems.add(orderItem);
+            orderItem.setOrder(this);
         }
-    }
+        //주문 취소 OrderStatus - CANCELLED
+        public void removeOrderItem(OrderItem orderItem) {
+            // null 체크 추가
+            if (orderItem != null) {
+                orderItems.remove(orderItem);
+                orderItem.setOrder(null);
+            }
+        }
+        
+        /**
+         * 배송서비스 할당 (순환참조 방지)
+         */
+        public void setJustDelivery(JustDelivery justDelivery) {
+            this.justDelivery = justDelivery;
+            if (justDelivery != null) {
+                justDelivery.assignToOrder(this.orderId, this.orderStatus);
+            }
+            this.movingService = null;
+        }
+        
+        /**
+         * 이사서비스 할당 (순환참조 방지)
+         */
+        public void setMovingService(MovingService movingService) {
+            this.movingService = movingService;
+            if (movingService != null) {
+                movingService.assignToOrder(this.orderId, this.orderStatus);
+            }
+            this.justDelivery = null;
+        }
 
+        //============팩토리 메서드==============//
+        public static Order createOrder(Member member, List<OrderItem> orderItems, ServiceType serviceType, OrderStatus orderStatus, boolean usePoints, int usedPoints) {
+            Order order = Order.builder()
+                    .member(member)
+                    .serviceType(serviceType)
+                    .orderStatus(orderStatus)
+                    .usePoints(usePoints)
+                    .usedPoints(usedPoints)
+                    .createOrderDate(LocalDate.now())
+                    .build();
 
+            orderItems.forEach(order::addOrderItem); // orderItem 추가 시에도 양방향 관계 보장 : builder로 넣으면 양방향 관계 깨질 수 있으니 for문 돌면서 addOrderItem() 호출
 
-        //최종 주문 스냅샷
-
-    public static Order createOrder(Member member, List<OrderItem> orderItems
-            , ServiceType serviceType, OrderStatus orderStatus, boolean usePoints, int usedPoints) {
-        Order order = Order.builder()
-                .member(member)
-                .orderStatus(OrderStatus.CREATED)
-                .orderItems(new ArrayList<>(orderItems))
-                .usePoints(usePoints)
-                .serviceType(serviceType)
-                .createOrderDate(LocalDate.now())
-                .usedPoints(usedPoints)
-                .build();
-
-        orderItems.forEach(order::addOrderItem); // orderItem 추가 시에도 양방향 관계 보장 : builder로 넣으면 양방향 관계 깨질 수 있으니 for문 돌면서 addOrderItem() 호출
-        return order;
-    }
-
+            return order;
+        }
 
 }
-

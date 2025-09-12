@@ -96,8 +96,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private void updateExistingUser(Member member, OAuth2UserInfo oAuth2UserInfo) {
-        if (!member.getName().equals(oAuth2UserInfo.getName())) {
-            member.setName(oAuth2UserInfo.getName());
+        String memberName = member.getName();
+        String oauthName = oAuth2UserInfo.getName();
+        
+        // NPE 방지: null 체크 후 문자열 비교
+        if (memberName != null && oauthName != null && !memberName.equals(oauthName)) {
+            member.setName(oauthName);
+            memberRepository.save(member);
+        } else if (memberName == null && oauthName != null) {
+            // 기존 이름이 null이고 OAuth에서 이름을 제공하는 경우
+            member.setName(oauthName);
             memberRepository.save(member);
         }
     }

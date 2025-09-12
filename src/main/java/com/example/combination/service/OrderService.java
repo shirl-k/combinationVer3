@@ -99,11 +99,15 @@ import java.util.List;
                 orderRepository.save(order);
             }
 
-        //주문 취소 CANCELLED
+        //주문 취소 CANCELLED (특정 OrderItem과 함께)
         public void removeOrder(Long orderId, OrderItem orderItem) {
             Order order = orderRepository.findByOrderId(orderId)
                     .orElseThrow(() -> new OrderNotFoundException(orderId));
-            order.removeOrderItem(orderItem);
+            
+            // orderItem이 null이 아닌 경우에만 제거
+            if (orderItem != null) {
+                order.removeOrderItem(orderItem);
+            }
 
             //주문 취소 시 포인트 롤백
             if(order.isUsePoints() && order.getUsedPoints() > 0) {
@@ -111,7 +115,19 @@ import java.util.List;
             }
 
             order.changeOrderStatus(OrderStatus.CANCELLED);
+        }
+        
+        //주문 취소 CANCELLED (전체 주문 취소)
+        public void cancelOrder(Long orderId) {
+            Order order = orderRepository.findByOrderId(orderId)
+                    .orElseThrow(() -> new OrderNotFoundException(orderId));
 
+            //주문 취소 시 포인트 롤백
+            if(order.isUsePoints() && order.getUsedPoints() > 0) {
+                order.getMember().addMemberPoints(order.getUsedPoints());
+            }
+
+            order.changeOrderStatus(OrderStatus.CANCELLED);
         }
 
         //주문 완료 COMPLETED 
@@ -123,4 +139,3 @@ import java.util.List;
 
         }
         }
-

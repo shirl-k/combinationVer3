@@ -28,7 +28,8 @@ public class MemberService {
     public void validateDuplicateUserId(String userId) { //unique
         memberRepository.findByUserId(userId)
                 .ifPresent(member ->  { //Optional + ifPresent
-                    if (member.getUserId().equals(userId)) {
+                    // NPE 방지: literal first 패턴 사용
+                    if (userId.equals(member.getUserId())) {
 
                     }
                         throw new IllegalStateException("이미 존재하는 회원 ID 입니다.: " + userId);

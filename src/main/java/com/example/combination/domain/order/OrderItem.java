@@ -13,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "order_item")
+@Table(name = "order_items")
 public class OrderItem { //결제 시 스냅샷(결제 당시 금액 영수증처럼 그대로 찍어내기. 가격 변동 고려)
 
     @Id
@@ -26,7 +26,7 @@ public class OrderItem { //결제 시 스냅샷(결제 당시 금액 영수증�
 
     private String name;
 
-    private String skuId;
+    private String skuCode; //skuId -> skuCode
 
     private int unitPrice; //주문 당시 단가.  //주문 당시 가격 (상품 가격 변동 고려)
 
@@ -51,7 +51,7 @@ public class OrderItem { //결제 시 스냅샷(결제 당시 금액 영수증�
     //CartItemDTO를 OrderItem엔티티로 변환 - 스냅샷 변환 팩토리
     public static OrderItem fromDTO(CartItemDTO cartItemDTO) {
         return OrderItem.builder()
-                .skuId(cartItemDTO.getSkuId())
+                .skuCode(cartItemDTO.getSkuId())
                 .name(cartItemDTO.getSkuName())
                 .quantity(cartItemDTO.getQuantity())
                 .build();

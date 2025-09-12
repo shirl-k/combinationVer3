@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@Table(name = "delivery_tracking")
+@Table(name = "delivery_trackings")
 public class DeliveryTracking {
     
     @Id

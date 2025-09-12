@@ -4,10 +4,10 @@ spring:
 
   # 데이터소스 설정 추가
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:mem:testdb;
     driver-class-name: org.h2.Driver
     username: sa
-    password: 
+    password:
 
   jpa:
     hibernate:
@@ -18,9 +18,13 @@ spring:
         format_sql: true  
 
   # H2 콘솔 활성화
+#  h2:
+#    console:
+#      enabled: true
   h2:
     console:
       enabled: true
+      path: /h2-console
 
   security:
     oauth2:

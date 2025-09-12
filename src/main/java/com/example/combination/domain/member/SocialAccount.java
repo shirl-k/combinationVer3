@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "social_account")
+@Table(name = "social_accounts")
 public class SocialAccount {
 
     @Id @GeneratedValue

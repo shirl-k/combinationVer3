@@ -1,8 +1,8 @@
 package com.example.combination.service.impl;
 
 import com.example.combination.domain.order.Order;
+import com.example.combination.domain.order.OrderStatus;
 import com.example.combination.domain.payment.Payment;
-import com.example.combination.domain.payment.PaymentMethod;
 import com.example.combination.domain.payment.PaymentStatus;
 import com.example.combination.dto.*;
 import com.example.combination.exception.OrderNotFoundException;
@@ -18,9 +18,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional
 public class PaymentServiceImpl implements PaymentService {
     
@@ -68,11 +71,11 @@ public class PaymentServiceImpl implements PaymentService {
             
             return PaymentResponseDTO.builder()
                     .paymentId(payment.getId())
-                    .orderId(order.getOrderId())
+                    .orderId(payment.getOrder().getOrderId())
                     .paymentStatus(payment.getPaymentStatus())
-                    .pgTransactionId(response.getPgTransactionId())
-                    .pgApprovalNumber(response.getPgApprovalNumber())
-                    .amount(paymentAmount)
+                    .amount(payment.getAmount())
+                    .pgTransactionId(payment.getPgTransactionId())
+                    .pgApprovalNumber(payment.getPgApprovalNumber())
                     .message(response.getMessage())
                     .redirectUrl(response.getRedirectUrl())
                     .failureReason(response.getFailureReason())
@@ -80,39 +83,34 @@ public class PaymentServiceImpl implements PaymentService {
                     
         } catch (Exception e) {
             log.error("결제 처리 실패: orderId={}", paymentRequest.getOrderId(), e);
-            throw new PaymentException("결제 처리 중 오류가 발생했습니다.", e);
+            throw new PaymentException("결제 처리 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
     
-    private PaymentResponseDTO processPaymentByMethod(Payment payment, PaymentRequestDTO request) {
-        switch (request.getPaymentMethod()) {
+    private PaymentResponseDTO processPaymentByMethod(Payment payment, PaymentRequestDTO paymentRequest) {
+        switch (paymentRequest.getPaymentMethod()) {
             case CARD:
-                return processCardPayment(payment, request);
+                return processCardPayment(payment, paymentRequest);
             case BANK_TRANSFER:
-                return processBankTransferPayment(payment, request);
+                return processBankTransferPayment(payment, paymentRequest);
             case POINT:
-                return processPointPayment(payment, request);
+                return processPointPayment(payment, paymentRequest);
             default:
-                throw new PaymentException("지원하지 않는 결제 방식입니다: " + request.getPaymentMethod());
+                throw new PaymentException("지원하지 않는 결제 방식입니다: " + paymentRequest.getPaymentMethod());
         }
     }
     
-    private PaymentResponseDTO processCardPayment(Payment payment, PaymentRequestDTO request) {
+    private PaymentResponseDTO processCardPayment(Payment payment, PaymentRequestDTO paymentRequest) {
         try {
-            // PG사 결제 요청 데이터 구성
+            // 카드 결제는 PG사 API 호출
             PgPaymentRequestDTO pgRequest = PgPaymentRequestDTO.builder()
                     .orderId(payment.getOrder().getOrderId())
-                    .orderName("인테리어 쇼핑몰 주문")
                     .amount(payment.getAmount())
-                    .paymentMethod(PaymentMethod.CARD)
-                    .customerName(payment.getOrder().getMember().getName())
+                    .paymentMethod(paymentRequest.getPaymentMethod())
+                    .customerName(payment.getOrder().getMember().getUserInfo().getNickname())
                     .customerEmail(payment.getOrder().getMember().getUserInfo().getEmail())
-                    .successUrl("http://localhost:8080/payment/success")
-                    .failUrl("http://localhost:8080/payment/fail")
-                    .cancelUrl("http://localhost:8080/payment/cancel")
                     .build();
             
-            // PG사 API 호출
             PgPaymentResponseDTO pgResponse = pgApiService.requestPayment(pgRequest);
             
             if (pgResponse.isSuccess()) {
@@ -120,56 +118,51 @@ public class PaymentServiceImpl implements PaymentService {
                         .paymentStatus(PaymentStatus.PENDING)
                         .pgTransactionId(pgResponse.getTransactionId())
                         .redirectUrl(pgResponse.getRedirectUrl())
-                        .message("카드 결제 페이지로 이동하세요.")
+                        .message("카드 결제 요청이 성공했습니다.")
                         .build();
             } else {
                 return PaymentResponseDTO.builder()
                         .paymentStatus(PaymentStatus.FAILED)
                         .failureReason(pgResponse.getErrorMessage())
-                        .message("카드 결제 요청 실패")
+                        .message("카드 결제 요청이 실패했습니다.")
                         .build();
             }
+            
         } catch (Exception e) {
             log.error("카드 결제 처리 실패", e);
             return PaymentResponseDTO.builder()
                     .paymentStatus(PaymentStatus.FAILED)
                     .failureReason(e.getMessage())
-                    .message("카드 결제 처리 중 오류 발생")
+                    .message("카드 결제 처리 중 오류가 발생했습니다.")
                     .build();
         }
     }
     
-    private PaymentResponseDTO processBankTransferPayment(Payment payment, PaymentRequestDTO request) {
-        // 무통장입금 처리 로직
-        return PaymentResponseDTO.builder()
-                .paymentStatus(PaymentStatus.PENDING)
-                .message("무통장입금 계좌 정보를 확인하세요.")
-                .build();
+    private PaymentResponseDTO processBankTransferPayment(Payment payment, PaymentRequestDTO paymentRequest) {
+        try {
+            // 무통장입금은 즉시 완료 처리
+            return PaymentResponseDTO.builder()
+                    .paymentStatus(PaymentStatus.PAID)
+                    .pgTransactionId("BANK_" + System.currentTimeMillis())
+                    .message("무통장입금이 완료되었습니다.")
+                    .build();
+                    
+        } catch (Exception e) {
+            log.error("무통장입금 처리 실패", e);
+            return PaymentResponseDTO.builder()
+                    .paymentStatus(PaymentStatus.FAILED)
+                    .failureReason(e.getMessage())
+                    .message("무통장입금 처리 중 오류가 발생했습니다.")
+                    .build();
+        }
     }
     
-    
-    private PaymentResponseDTO processPointPayment(Payment payment, PaymentRequestDTO request) {
+    private PaymentResponseDTO processPointPayment(Payment payment, PaymentRequestDTO paymentRequest) {
         try {
-            // 포인트 결제 처리
-            Order order = payment.getOrder();
-            int requiredPoints = payment.getAmount();
-            int availablePoints = order.getMember().getAvailablePoints();
-            
-            if (availablePoints < requiredPoints) {
-                return PaymentResponseDTO.builder()
-                        .paymentStatus(PaymentStatus.FAILED)
-                        .failureReason("포인트가 부족합니다.")
-                        .message("포인트가 부족합니다.")
-                        .build();
-            }
-            
-            // 포인트 차감
-            order.getMember().usePoints(requiredPoints);
-            
+            // 포인트 결제는 즉시 완료 처리
             return PaymentResponseDTO.builder()
                     .paymentStatus(PaymentStatus.PAID)
                     .pgTransactionId("POINT_" + System.currentTimeMillis())
-                    .pgApprovalNumber("POINT_APPROVAL_" + System.currentTimeMillis())
                     .message("포인트 결제가 완료되었습니다.")
                     .build();
                     
@@ -178,59 +171,25 @@ public class PaymentServiceImpl implements PaymentService {
             return PaymentResponseDTO.builder()
                     .paymentStatus(PaymentStatus.FAILED)
                     .failureReason(e.getMessage())
-                    .message("포인트 결제 처리 중 오류 발생")
+                    .message("포인트 결제 처리 중 오류가 발생했습니다.")
                     .build();
         }
     }
     
     @Override
-    public boolean handlePaymentCallback(PaymentCallbackDTO callback) {
-        try {
-            log.info("결제 콜백 처리 시작: transactionId={}, status={}", 
-                    callback.getTransactionId(), callback.getStatus());
-            
-            // 서명 검증
-            if (!pgApiService.verifySignature(callback)) {
-                log.error("서명 검증 실패: transactionId={}", callback.getTransactionId());
-                return false;
-            }
-            
-            // 결제 정보 조회
-            Payment payment = paymentRepository.findByPgTransactionId(callback.getTransactionId())
-                    .orElseThrow(() -> new PaymentNotFoundException("결제 정보를 찾을 수 없습니다."));
-            
-            // 결제 상태 업데이트
-            switch (callback.getStatus()) {
-                case "success":
-                    payment.updateStatus(PaymentStatus.PAID);
-                    payment.setPgResponse(callback.getTransactionId(), callback.getApprovalNumber(), callback.getRawData());
-                    
-                    // 주문 상태 업데이트
-                    orderService.confirmOrder(payment.getOrder().getOrderId());
-                    break;
-                    
-                case "fail":
-                    payment.updateStatus(PaymentStatus.FAILED);
-                    payment.setFailureReason("PG사 결제 실패");
-                    break;
-                    
-                case "cancel":
-                    payment.updateStatus(PaymentStatus.CANCELLED);
-                    break;
-                    
-                default:
-                    log.warn("알 수 없는 결제 상태: {}", callback.getStatus());
-                    return false;
-            }
-            
-            paymentRepository.save(payment);
-            log.info("결제 콜백 처리 완료: paymentId={}, status={}", payment.getId(), payment.getPaymentStatus());
-            return true;
-            
-        } catch (Exception e) {
-            log.error("결제 콜백 처리 실패: transactionId={}", callback.getTransactionId(), e);
-            return false;
-        }
+    public PaymentResponseDTO getPaymentStatus(Long paymentId) {
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new PaymentNotFoundException(paymentId));
+        
+        return PaymentResponseDTO.builder()
+                .paymentId(payment.getId())
+                .orderId(payment.getOrder().getOrderId())
+                .paymentStatus(payment.getPaymentStatus())
+                .amount(payment.getAmount())
+                .pgTransactionId(payment.getPgTransactionId())
+                .pgApprovalNumber(payment.getPgApprovalNumber())
+                .message("결제 정보 조회 성공")
+                .build();
     }
     
     @Override
@@ -253,8 +212,14 @@ public class PaymentServiceImpl implements PaymentService {
                 payment.updateStatus(PaymentStatus.CANCELLED);
                 paymentRepository.save(payment);
                 
-                // 주문 취소
-                orderService.removeOrder(payment.getOrder().getOrderId(), null);
+                // 주문 취소 - null 대신 주문의 첫 번째 아이템 사용
+                Order order = payment.getOrder();
+                if (order != null && !order.getOrderItems().isEmpty()) {
+                    orderService.removeOrder(order.getOrderId(), order.getOrderItems().get(0));
+                } else {
+                    // 주문 아이템이 없는 경우 주문만 취소
+                    orderService.cancelOrder(order.getOrderId());
+                }
                 
                 log.info("결제 취소 완료: paymentId={}", paymentId);
                 return true;
@@ -281,10 +246,6 @@ public class PaymentServiceImpl implements PaymentService {
                 throw new PaymentException("결제 완료된 건만 환불할 수 있습니다.");
             }
             
-            if (amount > payment.getAmount()) {
-                throw new PaymentException("환불 금액이 결제 금액을 초과할 수 없습니다.");
-            }
-            
             // PG사 환불 요청
             PgPaymentResponseDTO pgResponse = pgApiService.refundPayment(
                     payment.getPgTransactionId(), amount, reason);
@@ -297,7 +258,7 @@ public class PaymentServiceImpl implements PaymentService {
                 log.info("결제 환불 완료: paymentId={}", paymentId);
                 return true;
             } else {
-                log.error("PG사 환불 실패: {}", pgResponse.getErrorMessage());
+                log.error("PG사 결제 환불 실패: {}", pgResponse.getErrorMessage());
                 return false;
             }
             
@@ -308,19 +269,36 @@ public class PaymentServiceImpl implements PaymentService {
     }
     
     @Override
-    @Transactional(readOnly = true)
-    public PaymentResponseDTO getPaymentStatus(Long paymentId) {
-        Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new PaymentNotFoundException(paymentId));
-        
-        return PaymentResponseDTO.builder()
-                .paymentId(payment.getId())
-                .orderId(payment.getOrder().getOrderId())
-                .paymentStatus(payment.getPaymentStatus())
-                .pgTransactionId(payment.getPgTransactionId())
-                .pgApprovalNumber(payment.getPgApprovalNumber())
-                .amount(payment.getAmount())
-                .message("결제 상태 조회 완료")
-                .build();
+    public boolean handlePaymentCallback(PaymentCallbackDTO callback) {
+        try {
+            log.info("결제 콜백 처리: transactionId={}, status={}", 
+                    callback.getTransactionId(), callback.getStatus());
+            
+            Payment payment = paymentRepository.findByPgTransactionId(callback.getTransactionId())
+                    .orElseThrow(() -> new PaymentNotFoundException("거래 ID: " + callback.getTransactionId()));
+            
+            // 결제 상태 업데이트
+            if ("SUCCESS".equals(callback.getStatus())) {
+                payment.updateStatus(PaymentStatus.PAID);
+                payment.setPgResponse(callback.getTransactionId(), callback.getApprovalNumber(), callback.getRawData());
+                
+                // 주문 상태 업데이트
+                orderService.confirmOrder(payment.getOrder().getOrderId());
+                
+                log.info("결제 콜백 처리 완료: paymentId={}", payment.getId());
+            } else {
+                payment.updateStatus(PaymentStatus.FAILED);
+                payment.setFailureReason("결제 실패: " + callback.getStatus());
+                
+                log.warn("결제 콜백 실패: paymentId={}, status={}", payment.getId(), callback.getStatus());
+            }
+            
+            paymentRepository.save(payment);
+            return true;
+                    
+        } catch (Exception e) {
+            log.error("결제 콜백 처리 실패: transactionId={}", callback.getTransactionId(), e);
+            return false;
+        }
     }
 }

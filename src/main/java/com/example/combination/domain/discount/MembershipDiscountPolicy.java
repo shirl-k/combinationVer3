@@ -39,7 +39,7 @@ public class MembershipDiscountPolicy implements DiscountPolicy {
         return member != null && 
                member.getMembershipGrade() != null && 
                member.getMemberStatus() != null &&
-               member.getMemberStatus().name().equals("ACTIVE");
+               "ACTIVE".equals(member.getMemberStatus().name());
     }
     
     @Override
