@@ -35,7 +35,8 @@ public class MovingService implements OrderReference {
             @AttributeOverride(name = "city", column = @Column(name = "home_city")),
             @AttributeOverride(name = "district", column = @Column(name = "home_district")),
             @AttributeOverride(name = "roadNameAddress", column = @Column(name = "home_road_name")),
-            @AttributeOverride(name = "zipcode", column = @Column(name = "home_zipcode"))
+            @AttributeOverride(name = "zipcode", column = @Column(name = "home_zipcode")),
+            @AttributeOverride(name = "detailAddress", column = @Column(name = "home_detail_address"))
     })
     private HomeAddress homeAddress; //기존 집 주소
 
@@ -44,7 +45,8 @@ public class MovingService implements OrderReference {
             @AttributeOverride(name = "city", column = @Column(name = "moving_city")),
             @AttributeOverride(name = "district", column = @Column(name = "moving_district")),
             @AttributeOverride(name = "roadNameAddress", column = @Column(name = "moving_road_name")),
-            @AttributeOverride(name = "zipcode", column = @Column(name = "moving_zipcode"))
+            @AttributeOverride(name = "zipcode", column = @Column(name = "moving_zipcode")),
+            @AttributeOverride(name = "detailAddress", column = @Column(name = "moving_detail_address"))
     })
     private MovingServiceAddress movingServiceAddress; //새 주소 (배송지)
 

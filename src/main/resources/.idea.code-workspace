@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "../../../../.idea"
+		},
+		{
+			"path": "../../.."
+		}
+	],
+	"settings": {
+		"java.compile.nullAnalysis.mode": "automatic"
+	}
+}

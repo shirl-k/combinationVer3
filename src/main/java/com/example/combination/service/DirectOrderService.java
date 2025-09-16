@@ -155,6 +155,7 @@ public class DirectOrderService {
         JustDelivery justDelivery = JustDelivery.builder()
                 .deliveryAddress(DeliveryAddress.builder()
                         .roadNameAddress(request.getDeliveryAddress())
+                        .detailAddress(request.getDeliveryDetailAddress())
                         .build())
                 .build();
         
@@ -171,9 +172,11 @@ public class DirectOrderService {
                 .movingServiceDescription(request.getMovingDescription())
                 .homeAddress(HomeAddress.builder()
                         .roadNameAddress(request.getHomeAddress())
+                        .detailAddress(request.getHomeDetailAddress())
                         .build())
                 .movingServiceAddress(MovingServiceAddress.builder()
                         .roadNameAddress(request.getDeliveryAddress())
+                        .detailAddress(request.getMovingDetailAddress())
                         .build())
                 .build();
         

@@ -30,7 +30,8 @@ public class JustDelivery implements OrderReference {
             @AttributeOverride(name = "city", column = @Column(name = "just_city")),
             @AttributeOverride(name = "district", column = @Column(name = "just_district")),
             @AttributeOverride(name = "roadNameAddress", column = @Column(name = "just_road_name")),
-            @AttributeOverride(name = "zipcode", column = @Column(name = "just_zipcode"))
+            @AttributeOverride(name = "zipcode", column = @Column(name = "just_zipcode")),
+            @AttributeOverride(name = "detailAddress", column = @Column(name = "just_detail_address"))
     })
     private DeliveryAddress deliveryAddress;
 

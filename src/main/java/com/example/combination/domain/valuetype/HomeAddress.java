@@ -19,4 +19,5 @@ public class HomeAddress {
     private String district; //구
     private String roadNameAddress; //도로명 주소
     private String zipcode; //우편번호
+    private String detailAddress; //상세 주소 (동/호수, 건물명 등)
 }

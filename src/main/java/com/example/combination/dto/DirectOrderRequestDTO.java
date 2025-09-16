@@ -41,12 +41,15 @@ public class DirectOrderRequestDTO {
     
     // 배송 정보 (이사 서비스인 경우)
     private String deliveryAddress;
+    private String deliveryDetailAddress; // 배송 상세 주소
     private String customerName;
     private String customerPhone;
     private String customerEmail;
     
     // 이사 서비스 정보 (MOVING_SERVICE인 경우)
     private String homeAddress;
+    private String homeDetailAddress; // 기존 주소 상세 주소
     private String movingDate;
     private String movingDescription;
+    private String movingDetailAddress; // 새 주소 상세 주소
 }

@@ -361,6 +361,10 @@
                 <label for="deliveryAddress">배송 주소 *</label>
                 <input type="text" id="deliveryAddress" name="deliveryAddress" required>
             </div>
+            <div class="form-group">
+                <label for="deliveryDetailAddress">상세 주소</label>
+                <input type="text" id="deliveryDetailAddress" name="deliveryDetailAddress" placeholder="동/호수, 건물명 등을 입력하세요">
+            </div>
         </div>
         
         <!-- 이사 서비스 정보 -->
@@ -369,6 +373,14 @@
             <div class="form-group">
                 <label for="homeAddress">현재 주소 *</label>
                 <input type="text" id="homeAddress" name="homeAddress">
+            </div>
+            <div class="form-group">
+                <label for="homeDetailAddress">현재 주소 상세</label>
+                <input type="text" id="homeDetailAddress" name="homeDetailAddress" placeholder="동/호수, 건물명 등을 입력하세요">
+            </div>
+            <div class="form-group">
+                <label for="movingDetailAddress">새 주소 상세</label>
+                <input type="text" id="movingDetailAddress" name="movingDetailAddress" placeholder="동/호수, 건물명 등을 입력하세요">
             </div>
             <div class="form-group">
                 <label for="movingDate">이사 예정일</label>
@@ -570,9 +582,12 @@
                     customerPhone: document.getElementById('customerPhone').value,
                     customerEmail: document.getElementById('customerEmail').value,
                     deliveryAddress: document.getElementById('deliveryAddress').value,
+                    deliveryDetailAddress: document.getElementById('deliveryDetailAddress').value,
                     homeAddress: document.getElementById('homeAddress').value,
+                    homeDetailAddress: document.getElementById('homeDetailAddress').value,
                     movingDate: document.getElementById('movingDate').value,
-                    movingDescription: document.getElementById('movingDescription').value
+                    movingDescription: document.getElementById('movingDescription').value,
+                    movingDetailAddress: document.getElementById('movingDetailAddress').value
                 };
                 
                 const response = await fetch('/api/direct-order/process', {
